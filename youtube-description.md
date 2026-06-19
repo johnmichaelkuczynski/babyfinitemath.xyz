@@ -1,29 +1,36 @@
-# YouTube — Baby Finite Math
+# YouTube — Basic Finite Math — AI-Powered Course
 
-## 🎬 Title options (pick one)
+## 🎬 Title
 
-1. Baby Finite Math — an AI course that teaches, tutors & grades itself
-2. I built an AI-powered course on finite math (it even catches AI cheating)
-3. Useful Math Without the Infinite — a friendly finite-math course for curious students & adults
+Basic Finite Math — AI-Powered Course
 
 ---
 
 ## 📝 Description (paste into YouTube)
 
-Meet **Baby Finite Math** — a friendly, one-unit intro to finite math that teaches, tutors, drills, and grades itself, entirely with AI. No prior math, no coding, no jargon. Just plain-language lessons about the practical math of counting, chance, and decisions you can actually finish — how to organize the world into sets, count possibilities without listing them all, measure how likely something is, and make the most of limited resources, explained intuitively from start to finish.
+Basic Finite Math is a complete, self-paced course covering a full one-unit introduction to finite math — the mathematics of counting, chance, and decision-making over finite, countable situations. Every part of it is taught, tutored, drilled, and graded by AI, and every submission is screened for AI authorship.
 
-In this video you'll see the whole course in action:
+The curriculum covers eight topics in depth:
 
-🔎 Eight plain-language topics — from "what finite math is" all the way to "putting finite math to work"
-📖 Three-depth lessons — read any topic Short, Medium, or Long, same ideas at your pace
-💬 A section-scoped AI tutor that answers questions about the exact paragraph you're reading
-🎯 Adaptive practice that gets harder when you're on a streak and eases off when you're stuck
-📝 AI-graded homework, a unit test, and a final — each with real written feedback
-🛡️ Two-layer AI-authorship detection on every answer you submit (a text classifier AND a keystroke-pattern detector)
+• What finite math is — useful math without the infinite
+• Sets and logic — organizing the world into categories
+• The art of counting — permutations and combinations
+• Probability — measuring what's likely
+• Matrices — organizing and solving with grids of numbers
+• Linear programming — getting the most out of limited resources
+• The math of money — interest, loans, and growth
+• Putting finite math to work — the capstone
 
-Perfect for curious adults wanting a quick but meaningful intro to finite math, students exploring counting and probability, instructors exploring AI-taught coursework, and academic-integrity researchers.
+What you'll see in this walkthrough:
 
-Start learning — no instructor, no textbook, no prior math.
+📖 Three-depth lessons — read any topic Short, Medium, or Long; the same material, rewritten to the depth you want
+💬 A section-scoped AI tutor that answers questions grounded in the exact passage you're reading
+🎯 Adaptive practice that raises difficulty as you build a streak and eases off when you miss
+📝 AI-graded homework, a unit test, and a cumulative final — each with written, per-problem feedback
+🛡️ Two-layer AI-authorship detection on every answer: a static text classifier and a keystroke-pattern detector
+📊 Live analytics — per-topic mastery, accuracy, and progress at a glance
+
+The material assumes no prior background in finite math and develops every idea from first principles in plain language — suited to adults approaching the subject for the first time, including graduate students and researchers entering the field from another discipline.
 
 ---
 
@@ -37,16 +44,16 @@ Start learning — no instructor, no textbook, no prior math.
 0:24 Adaptive practice that adjusts to you
 0:30 AI grading + two-layer AI detection
 0:36 Progress and mastery analytics
-0:40 Baby Finite Math
+0:40 Basic Finite Math
 
 ---
 
 ## 🏷️ Hashtags
 
-#FiniteMath #Math #Probability #MathEducation #EdTech #OnlineLearning #LearnMath #LearnSomethingNew
+#FiniteMath #Mathematics #Probability #Combinatorics #LinearProgramming #MathEducation #OnlineLearning #AI
 
 ---
 
 ## 🔍 Tags
 
-finite math, sets and logic, counting, permutations, combinations, probability, matrices, linear programming, math of money, interest, math tutor, math education, edtech, online learning, adaptive learning, self-paced course, AI grading, academic integrity
+finite math, sets and logic, counting, permutations, combinations, probability, matrices, linear programming, math of money, interest, mathematics course, self-paced course, AI tutor, AI grading, academic integrity, AI authorship detection

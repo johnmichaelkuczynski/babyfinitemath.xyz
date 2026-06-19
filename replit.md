@@ -1,18 +1,18 @@
-# 🔎 Baby Finite Math
+# 🔎 Basic Finite Math
 
-**A Friendly, One-Unit Intro to Finite Math That Teaches, Tutors, and Proofs Itself — for Curious Students and Adults Alike**
+**A Complete, One-Unit Introduction to Finite Math That Teaches, Tutors, Drills, Grades, and Proofs Itself — for Adults Beginning the Discipline**
 
 ---
 
 ## 🧩 Overview
 
-Baby Finite Math is a self-paced, single-user web course that delivers a friendly, plain-language introduction to finite math — the practical math of counting, chance, and decisions you can actually finish — taught, tutored, drilled, and graded entirely by AI, with built-in academic-integrity enforcement. No prior math or coding required; every idea is explained intuitively in plain words rather than heavy formulas.
+Basic Finite Math is a self-paced, single-user web course that delivers a thorough, plain-language introduction to finite math — the practical math of counting, chance, and decisions you can actually finish — taught, tutored, drilled, and graded entirely by AI, with built-in academic-integrity enforcement. It assumes no prior background in the subject and develops every idea from first principles in plain words rather than dense formalism.
 
 It turns everyday questions — *how many ways can this happen, how likely is it, and how do I make the most of what I have* — into one product: read each lesson at the depth you want, ask a tutor scoped to the exact section you're on, drill questions whose difficulty adapts to you in real time, and submit homework, a unit test, and a final that are AI-graded with feedback and screened for AI-generated answers. The material is kept approachable and concrete — it explains how to organize the world into sets, count possibilities without listing them all, measure how likely something is, and stretch limited resources, from club overlaps and card decks to interest, loans, and growth.
 
 The curriculum is organized into **one unit and 8 topics**: 1.1 what finite math is (useful math without the infinite); 1.2 sets and logic (organizing the world into categories); 1.3 the art of counting (permutations and combinations); 1.4 probability (measuring what's likely); 1.5 matrices (organizing and solving with grids of numbers); 1.6 linear programming (getting the most out of limited resources); 1.7 the math of money (interest, loans, and growth); and 1.8 putting finite math to work (the capstone).
 
-Designed for **middle schoolers, curious adults wanting brief but meaningful exposure, instructors evaluating AI-taught coursework, and researchers studying AI academic integrity**, Baby Finite Math pairs a real curriculum with two layers of AI-authorship detection — surfacing not just *whether* the writing looks AI-generated, but whether the *act of producing it* did.
+Designed for **adults beginning finite math — including graduate students and researchers entering the field from another discipline — as well as instructors evaluating AI-taught coursework and researchers studying AI academic integrity**, Basic Finite Math pairs a real curriculum with two layers of AI-authorship detection — surfacing not just *whether* the writing looks AI-generated, but whether the *act of producing it* did.
 
 ---
 
@@ -48,7 +48,7 @@ Designed for **middle schoolers, curious adults wanting brief but meaningful exp
 
 ## 📊 Designed For
 
-- **Middle Schoolers & Curious Adults:** A complete, plain-language intro to finite math delivered with on-demand tutoring and adaptive practice — no instructor and no prior math or coding required.
+- **Newcomers to the discipline:** A complete, plain-language introduction to finite math delivered with on-demand tutoring and adaptive practice — self-contained and assuming no prior background, with no instructor required.
 - **Instructors & Curriculum Designers:** A working reference for what AI-taught, AI-graded, AI-detection-screened coursework actually looks like end-to-end.
 - **Academic-Integrity Researchers:** A live testbed for layered AI-authorship detection that combines text-based classification with behavioral keystroke evidence.
 - **Product & Engineering Teams:** A reference implementation of contract-first full-stack architecture, streaming AI UX, and self-diagnostic operator tooling in a Replit pnpm monorepo.
@@ -57,14 +57,17 @@ Designed for **middle schoolers, curious adults wanting brief but meaningful exp
 
 ## 💡 Core Idea
 
-Baby Finite Math reframes an AI-taught course as a *closed accountability loop*.
+Basic Finite Math reframes an AI-taught course as a *closed accountability loop*.
 
 It doesn't just teach the material and grade the homework — it **teaches**, **tutors**, **drills**, **grades**, **detects misuse**, and **proves the whole pipeline still works** with a single click. The result is a self-paced course that students can actually trust to be fair, and that instructors can actually trust to be honest.
 
-**Baby Finite Math — where the curriculum, the tutor, the grader, and the integrity check all live in one room.**
+**Basic Finite Math — where the curriculum, the tutor, the grader, and the integrity check all live in one room.**
 
 ---
 
 ## 👤 User preferences
 
 - The user prefers to **convert the existing app in place** (e.g. replacing the prior course content/branding with the new subject) rather than create a standalone clone — keep all functionality and format intact when making content/branding changes.
+- **Audience & tone:** This is a serious, substantial course for **adults** — typically people beginning a new discipline (often graduate students or professors). It is **never** for children. The words **"baby"** and **"children"** (and "kids", "middle schoolers", "kid-friendly", etc.) must **never** appear in the app, README, video, or YouTube description — the only exception is when the course's actual subject matter is about children/babies (e.g. developmental psychology). Never describe the course in a goofy, cute, or condescending way, and never lead with belittling hooks like "No math!" or "kid-friendly". Marketing copy should foreground the **depth and wealth of the content**.
+- **App naming:** The app/course must always have the most literal, utilitarian name possible (e.g. "Data Analytics", "Ethics", "Formal Logic", "Basic AI") — never a cute, funny, or goofy name. If a name is "Baby X", rename it "Basic X"; if it is "X for Children", rename it "Basic X". A "Basic" qualifier is acceptable (the course is basic), but it is still for adults.
+- **YouTube description title format:** The app title in the YouTube description must always be exactly `X — AI-Powered Course` (e.g. "Basic Finite Math — AI-Powered Course", "Evolutionary Psychology — AI-Powered Course"). Do not append any descriptors or taglines to that title line.

@@ -16,13 +16,13 @@ title = "QuantReason — App Blueprint"
 id = "gBlmXbiu3K5FNCNv2fX9f"
 uri = "file://README.md"
 type = "text"
-title = "README — Baby Finite Math"
+title = "README — Basic Finite Math"
 
 [[outputs]]
 id = "IhlBFpvwhqNicclr5C_QR"
 uri = "file://youtube-description.md"
 type = "text"
-title = "YouTube Description — Baby Finite Math"
+title = "YouTube Description — Basic Finite Math"
 
 [[outputs]]
 id = "Qpzwo_NPMNo_tjMm6_ppp"

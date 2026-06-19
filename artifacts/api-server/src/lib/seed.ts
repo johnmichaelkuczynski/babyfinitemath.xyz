@@ -14,7 +14,7 @@ import { logger } from "./logger";
 // the value stored in seed_meta; a mismatch forces a full re-seed, so content
 // edits self-heal in every environment (including a republished production)
 // without a manual database wipe.
-const SEED_CONTENT_VERSION = "2026-06-18-baby-finite-math-v1";
+const SEED_CONTENT_VERSION = "2026-06-18-basic-finite-math-v2";
 
 type SeedTopic = {
   slug: string;
@@ -26,16 +26,16 @@ type SeedTopic = {
 };
 
 const TOPICS: SeedTopic[] = [
-  // Unit 1 — Baby Finite Math: useful math without the infinite
+  // Unit 1 — Basic Finite Math: useful math without the infinite
   {
     slug: "what-finite-math-is",
     title: "What finite math is",
     weekNumber: 1,
-    blurb: "Finite math is the friendly, practical math of countable things — counting, chance, grids, and money — with no calculus and no infinity required.",
+    blurb: "Finite math is the practical math of countable things — counting, chance, grids, and money — with no calculus and no infinity required.",
     lectureTitle: "1.1 What finite math is: useful math without the infinite",
     body: `# What finite math is
 
-Most people meet "advanced math" as calculus — the math of the infinite, of curves and motion and things that grow without end. **Finite math** is the friendly cousin that stays in the world you can count. It's a collection of practical tools — for organizing, counting, measuring chance, solving with grids, making the best choice, and handling money — that all work on a finite, manageable number of things. No infinity, no limits, no calculus. Just useful math for everyday decisions, and that down-to-earth usefulness is the whole point of this course.
+Most people meet "advanced math" as calculus — the math of the infinite, of curves and motion and things that grow without end. **Finite math** is its practical counterpart that stays in the world you can count. It's a collection of practical tools — for organizing, counting, measuring chance, solving with grids, making the best choice, and handling money — that all work on a finite, manageable number of things. No infinity, no limits, no calculus. Just useful math for everyday decisions, and that down-to-earth usefulness is the whole point of this course.
 
 ## What "finite" means here
 
@@ -380,7 +380,7 @@ const ASSIGNMENTS: SeedAssignment[] = [
   },
   {
     kind: "test",
-    title: "Unit Test — Baby Finite Math: Useful Math Without the Infinite",
+    title: "Unit Test — Basic Finite Math: Useful Math Without the Infinite",
     weekNumber: 1,
     isTimed: true,
     timeLimitMinutes: 30,
@@ -463,7 +463,7 @@ const ASSIGNMENTS: SeedAssignment[] = [
   },
   {
     kind: "final",
-    title: "Final — Baby Finite Math: Useful Math Without the Infinite",
+    title: "Final — Basic Finite Math: Useful Math Without the Infinite",
     weekNumber: 1,
     isTimed: true,
     timeLimitMinutes: 45,
@@ -641,7 +641,7 @@ export async function seedReasoningPrimersIfMissing(): Promise<void> {
 }
 
 export async function seedIfEmpty(): Promise<void> {
-  // The course was migrated to the Baby Finite Math syllabus. Detect the
+  // The course was migrated to the Basic Finite Math syllabus. Detect the
   // marker topic; if present and the content version matches, the content is
   // current and we skip. This makes the seed self-healing across environments: a
   // database that still holds older content (e.g. a previous curriculum) is
@@ -690,7 +690,7 @@ export async function seedIfEmpty(): Promise<void> {
     const row = (existing.rows[0] ?? {}) as { n?: number };
     if ((row.n ?? 0) > 0) {
       logger.warn(
-        "Seed: stale course content detected — replacing with the Baby Finite Math curriculum",
+        "Seed: stale course content detected — replacing with the Basic Finite Math curriculum",
       );
       await tx.execute(
         sql`TRUNCATE TABLE answers, attempts, practice_attempts, practice_problems, practice_sessions, problems, assignments, lectures, topics, diagnostic_responses, diagnostic_attempts, diagnostic_items, diagnostic_assessments RESTART IDENTITY CASCADE`,

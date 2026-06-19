@@ -44,8 +44,8 @@ export function Scene1() {
               transition={{ duration: 0.8 }}
               className="text-[1.5vw] text-[#4A5568] max-w-2xl mt-6"
             >
-              A friendly, plain-language intro to finite math. <br/>
-              Taught, tutored, and graded by AI. No prior calculus or proofs.
+              A complete, plain-language introduction to finite math. <br/>
+              Taught, tutored, drilled, and graded by AI.
             </motion.p>
           </motion.div>
         ) : (

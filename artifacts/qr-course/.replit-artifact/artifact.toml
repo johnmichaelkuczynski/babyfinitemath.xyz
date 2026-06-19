@@ -1,6 +1,6 @@
 kind = "web"
 previewPath = "/"
-title = "Baby Finite Math"
+title = "Basic Finite Math"
 version = "1.0.0"
 id = "artifacts/qr-course"
 router = "path"

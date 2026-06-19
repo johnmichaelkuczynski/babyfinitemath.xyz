@@ -21,9 +21,9 @@ const router: IRouter = Router();
 
 const WEEK_TITLES: Record<number, { title: string; summary: string }> = {
   1: {
-    title: "Baby Finite Math: Useful Math Without the Infinite",
+    title: "Basic Finite Math: Useful Math Without the Infinite",
     summary:
-      "What finite math really is and why it's the practical, countable math you actually use without any calculus, how sets and logic organize the world into clear categories, how the art of counting (permutations and combinations) tells you how many ways something can happen, how probability measures what's likely, how matrices organize and solve with grids of numbers, how linear programming gets the most out of limited resources, how the math of money handles interest, loans, and growth, and how it all comes together on real problems — all in plain language, no prior math or coding required.",
+      "What finite math really is and why it's the practical, countable math you actually use without any calculus, how sets and logic organize the world into clear categories, how the art of counting (permutations and combinations) tells you how many ways something can happen, how probability measures what's likely, how matrices organize and solve with grids of numbers, how linear programming gets the most out of limited resources, how the math of money handles interest, loans, and growth, and how it all comes together on real problems — all in plain language, developed from first principles.",
   },
 };
 
@@ -112,7 +112,7 @@ router.get("/course/overview", async (_req, res) => {
 
   res.json(
     GetCourseOverviewResponse.parse({
-      title: "Baby Finite Math",
+      title: "Basic Finite Math",
       weeks,
       totals: { assignmentsCompleted, assignmentsTotal, practiceCount },
     }),

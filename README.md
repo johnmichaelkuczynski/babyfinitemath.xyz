@@ -1,8 +1,8 @@
-# 🔎 Baby Finite Math
+# 🔎 Basic Finite Math
 
-**A friendly, one-unit intro to finite math that teaches, tutors, drills, and grades itself — for curious students and adults alike.**
+**A complete, one-unit introduction to finite math that teaches, tutors, drills, and grades itself — for adults beginning the discipline.**
 
-Baby Finite Math is a self-paced, single-user web course that delivers a plain-language introduction to finite math — the practical math of counting, chance, and decisions you can actually finish — taught, tutored, drilled, and graded entirely by AI, with built-in academic-integrity enforcement. No prior math or coding required. Every idea is explained intuitively in plain words rather than heavy formulas: how to organize the world into sets, count possibilities without listing them all, measure how likely something is, and make the most of limited resources — from club overlaps and card decks to interest, loans, and growth.
+Basic Finite Math is a self-paced, single-user web course that delivers a thorough, plain-language introduction to finite math — the practical math of counting, chance, and decisions you can actually finish — taught, tutored, drilled, and graded entirely by AI, with built-in academic-integrity enforcement. It assumes no prior background in the subject and develops every idea from first principles in plain words rather than dense formalism: how to organize the world into sets, count possibilities without listing them all, measure how likely something is, and make the most of limited resources — from club overlaps and card decks to interest, loans, and growth.
 
 ---
 
@@ -92,11 +92,11 @@ Open the **Diagnostics** page in the app (or hit the API directly) to run:
 
 ## 📚 Who it's for
 
-- **Middle schoolers & curious adults** — a complete, plain-language intro to finite math with on-demand tutoring and adaptive practice.
+- **Newcomers to the discipline** — a complete, plain-language introduction to finite math with on-demand tutoring and adaptive practice, assuming no prior background.
 - **Instructors & curriculum designers** — a working reference for AI-taught, AI-graded, AI-detection-screened coursework.
 - **Academic-integrity researchers** — a live testbed for layered AI-authorship detection (text classification + keystroke behavior).
 - **Product & engineering teams** — a reference implementation of contract-first full-stack architecture, streaming AI UX, and self-diagnostic tooling.
 
 ---
 
-*Baby Finite Math — where the curriculum, the tutor, the grader, and the integrity check all live in one room.*
+*Basic Finite Math — where the curriculum, the tutor, the grader, and the integrity check all live in one room.*

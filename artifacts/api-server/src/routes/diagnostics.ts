@@ -694,7 +694,7 @@ router.post("/diagnostics/expand-lectures", async (req, res) => {
     `2. ${moreExplanation}\n` +
     `3. ${moreExamples} Use \`## Example\` / \`### Example 1\`, \`### Example 2\` headings, with clear thought experiments and worked-through cases.\n` +
     `4. Length target: ${ratio}.\n` +
-    "5. Friendly, plain English. No filler, no hedging, no 'in conclusion'. Examples carry the load.\n" +
+    "5. Clear, direct, plain English. No filler, no hedging, no 'in conclusion'. Examples carry the load.\n" +
     "6. Return ONLY the rewritten Markdown lecture body. No preface, no commentary, no code fences around the whole thing.";
 
   let updated = 0;

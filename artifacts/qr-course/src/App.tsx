@@ -235,13 +235,13 @@ function ClerkProviderWithRoutes() {
         signIn: {
           start: {
             title: "Welcome back",
-            subtitle: "Sign in to continue your Baby Finite Math course",
+            subtitle: "Sign in to continue your Basic Finite Math course",
           },
         },
         signUp: {
           start: {
             title: "Create your account",
-            subtitle: "Start your finite math journey with Baby Finite Math",
+            subtitle: "Start your finite math journey with Basic Finite Math",
           },
         },
       }}
