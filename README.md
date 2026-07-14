@@ -35,7 +35,7 @@ lib/
 
 **Contract-first:** a single OpenAPI document is the source of truth. React Query hooks (client) and Zod validators (server) are generated from it, so request/response shapes can't drift.
 
-**Tech stack:** React, Vite, TypeScript, Tailwind, Express, Drizzle ORM, PostgreSQL, Clerk (auth), OpenAI (tutoring/grading), GPTZero (AI detection), Framer Motion (video).
+**Tech stack:** React, Vite, TypeScript, Tailwind, Express, Drizzle ORM, PostgreSQL, Google OAuth / Passport (auth), OpenAI (tutoring/grading), GPTZero (AI detection), Framer Motion (video).
 
 ---
 
@@ -49,8 +49,6 @@ The app reads the following secrets/environment variables (managed in the Replit
 | `OPENAI_API_KEY` | OpenAI key for the tutor, practice generation, and grading |
 | `OPENAI_BASE_URL` | OpenAI-compatible base URL |
 | `GPTZERO_API_KEY` | GPTZero key for static AI-authorship detection |
-| `CLERK_SECRET_KEY` / `CLERK_PUBLISHABLE_KEY` | Clerk authentication (server + client) |
-| `VITE_CLERK_PUBLISHABLE_KEY` | Clerk publishable key exposed to the frontend |
 | `SESSION_SECRET` | Server session signing |
 
 ---
@@ -77,7 +75,7 @@ The API server seeds the course content on startup and self-heals when the conte
 
 ### Authentication
 
-Sign-in uses **Clerk** with email/password and social SSO (including **Sign in with Google**). Social providers are toggled from the workspace **Auth** pane — enabling Google there makes it appear on the sign-in screen automatically; no code change is required. For a branded Google consent screen in production, add your own Google OAuth Client ID/Secret in the Auth pane.
+Sign-in uses **Google OAuth 2.0** (Passport + express-session). Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in the Secrets pane; sessions are stored in the database via `connect-pg-simple`. `SESSION_SECRET` is required in production.
 
 ---
 

@@ -3,13 +3,7 @@ import cors from "cors";
 import pinoHttp from "pino-http";
 import path from "node:path";
 import fs from "node:fs";
-import { clerkMiddleware } from "@clerk/express";
-import { publishableKeyFromHost } from "@clerk/shared/keys";
-import {
-  CLERK_PROXY_PATH,
-  clerkProxyMiddleware,
-  getClerkProxyHost,
-} from "./middlewares/clerkProxyMiddleware";
+import { setupAuth } from "./auth";
 import router from "./routes";
 import { logger } from "./lib/logger";
 
@@ -35,30 +29,16 @@ app.use(
   }),
 );
 
-// Clerk auth proxy must be mounted before body parsers (it streams raw bytes).
-app.use(CLERK_PROXY_PATH, clerkProxyMiddleware());
-
 app.use(cors({ credentials: true, origin: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Resolve the publishable key from the incoming request host so the same
-// server can serve multiple Clerk custom domains. Falls back to
-// CLERK_PUBLISHABLE_KEY when the host doesn't map to a custom domain.
-app.use(
-  clerkMiddleware((req) => ({
-    publishableKey: publishableKeyFromHost(
-      getClerkProxyHost(req) ?? "",
-      process.env.CLERK_PUBLISHABLE_KEY,
-    ),
-  })),
-);
+// Google OAuth + session-based authentication
+setupAuth(app);
 
 app.use("/api", router);
 
 // In production, serve the built qr-course frontend from the same process.
-// On Replit the deploy sidecar handles this; on Render (single web service)
-// the API server serves both /api and the static SPA.
 if (process.env.NODE_ENV === "production") {
   const candidates = [
     path.resolve(process.cwd(), "artifacts/qr-course/dist/public"),

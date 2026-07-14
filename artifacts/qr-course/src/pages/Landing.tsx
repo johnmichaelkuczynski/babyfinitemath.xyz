@@ -1,4 +1,3 @@
-import { Link } from "wouter";
 import {
   BarChart3,
   BookOpen,
@@ -8,6 +7,8 @@ import {
   ShieldCheck,
   Search,
 } from "lucide-react";
+
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 const features = [
   {
@@ -66,22 +67,22 @@ export default function Landing() {
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/sign-in">
+          <a href={`${basePath}/api/auth/google`}>
             <button
               className="px-4 py-2 rounded-md text-sm font-medium border border-border hover:bg-secondary transition-colors"
               data-testid="button-sign-in"
             >
               Sign in
             </button>
-          </Link>
-          <Link href="/sign-up">
+          </a>
+          <a href={`${basePath}/api/auth/google`}>
             <button
               className="px-4 py-2 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
               data-testid="button-sign-up"
             >
               Get started
             </button>
-          </Link>
+          </a>
         </div>
       </header>
 
@@ -100,22 +101,14 @@ export default function Landing() {
             every idea explained in plain words. Built for adults approaching the subject for the first time.
           </p>
           <div className="flex items-center justify-center gap-3">
-            <Link href="/sign-up">
+            <a href={`${basePath}/api/auth/google`}>
               <button
                 className="px-6 py-3 rounded-md text-base font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
                 data-testid="button-cta-start"
               >
                 Sign in with Google to start
               </button>
-            </Link>
-            <Link href="/sign-in">
-              <button
-                className="px-6 py-3 rounded-md text-base font-medium border border-border hover:bg-secondary transition-colors"
-                data-testid="button-cta-signin"
-              >
-                I already have an account
-              </button>
-            </Link>
+            </a>
           </div>
         </section>
 

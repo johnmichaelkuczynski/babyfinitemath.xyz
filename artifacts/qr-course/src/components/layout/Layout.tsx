@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { LayoutDashboard, PenTool, BarChart3, Activity, RotateCcw, Sparkles, LogOut, Scale, GraduationCap, ShieldCheck, Search } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useClerk, useUser } from "@clerk/react";
+import { useAuth, useLogout } from "@/hooks/useAuth";
 import { useAdminMode } from "@/lib/adminMode";
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
@@ -67,8 +67,8 @@ function TopBar() {
   const active = location.startsWith("/diagnostics");
   const [adminMode, setAdminMode] = useAdminMode();
   const qc = useQueryClient();
-  const { signOut } = useClerk();
-  const { user } = useUser();
+  const { user } = useAuth();
+  const logout = useLogout();
   const [resetting, setResetting] = useState(false);
   const [expanding, setExpanding] = useState(false);
   const [expandProgress, setExpandProgress] = useState<string | null>(null);
@@ -77,10 +77,6 @@ function TopBar() {
     setExpanding(true);
     setExpandProgress("Loading lectures…");
     try {
-      // Fetch every lecture id so we can rewrite ONE lecture per request.
-      // A single bulk request that rewrites all lectures for both levels takes
-      // many minutes and gets killed by the proxy, so we drive it client-side
-      // with short (~30s) requests and live progress instead.
       const ovRes = await fetch(`${basePath}/api/course/overview`);
       if (!ovRes.ok) throw new Error(`HTTP ${ovRes.status}`);
       const overview = (await ovRes.json()) as {
@@ -112,9 +108,6 @@ function TopBar() {
         }
       }
       await qc.invalidateQueries();
-      console.info(
-        `Lecture expansion complete — ${total - failed}/${total} succeeded (${failed} failed).`,
-      );
     } catch (e) {
       console.error(`Lecture rewrite failed: ${(e as Error).message}`);
     } finally {
@@ -126,7 +119,7 @@ function TopBar() {
   async function handleReset() {
     setResetting(true);
     try {
-      const res = await fetch("/api/diagnostics/reset", { method: "POST" });
+      const res = await fetch(`${basePath}/api/diagnostics/reset`, { method: "POST" });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       await qc.invalidateQueries();
       setLocation("/");
@@ -192,14 +185,14 @@ function TopBar() {
       {user && (
         <span
           className="hidden sm:inline text-sm text-muted-foreground max-w-[12rem] truncate"
-          title={user.primaryEmailAddress?.emailAddress ?? undefined}
+          title={user.email ?? undefined}
           data-testid="text-user-email"
         >
-          {user.primaryEmailAddress?.emailAddress ?? user.firstName ?? "Account"}
+          {user.email ?? user.displayName ?? user.username ?? "Account"}
         </span>
       )}
       <button
-        onClick={() => signOut({ redirectUrl: basePath || "/" })}
+        onClick={logout}
         className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium border border-border hover:bg-secondary"
         data-testid="button-sign-out"
         title="Sign out"
