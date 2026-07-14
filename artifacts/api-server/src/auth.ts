@@ -60,11 +60,33 @@ export function setupAuth(app: Express) {
     console.error('Session pool error:', err);
   });
 
+  // Pre-create the session table so connect-pg-simple never has to read
+  // its bundled table.sql (which esbuild doesn't include in the production build).
+  pool.query(`
+    CREATE TABLE IF NOT EXISTS "user_sessions" (
+      "sid"    varchar        NOT NULL COLLATE "default",
+      "sess"   json           NOT NULL,
+      "expire" timestamp(6)  NOT NULL
+    );
+    DO $$ BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint
+        WHERE conname = 'session_pkey'
+      ) THEN
+        ALTER TABLE "user_sessions"
+          ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
+      END IF;
+    END $$;
+    CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON "user_sessions" ("expire");
+  `).catch((err: unknown) => {
+    console.error('Session table ensure error:', err);
+  });
+
   // Session setup with database storage
   const pgStore = new PgSession({
     pool,
     tableName: 'user_sessions',
-    createTableIfMissing: true,
+    createTableIfMissing: false,
     errorLog: console.error.bind(console, 'Session store error:'),
   });
 
