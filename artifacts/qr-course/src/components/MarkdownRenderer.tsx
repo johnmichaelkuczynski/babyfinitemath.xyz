@@ -12,6 +12,18 @@ interface MarkdownRendererProps {
 function normalize(src: string): string {
   let s = src.replace(/\r\n/g, "\n");
 
+  // Convert \[...\] display math → $$...$$
+  s = s.replace(/\\\[([\s\S]*?)\\\]/g, (_m, inner: string) => {
+    const collapsed = inner.replace(/\s+/g, " ").trim();
+    return `\n\n$$${collapsed}$$\n\n`;
+  });
+
+  // Convert \(...\) inline math → $...$
+  s = s.replace(/\\\(([\s\S]*?)\\\)/g, (_m, inner: string) => {
+    return `$${inner.trim()}$`;
+  });
+
+  // Normalise $$...$$ blocks (collapse internal whitespace)
   s = s.replace(/\$\$([\s\S]*?)\$\$/g, (_m, inner: string) => {
     const collapsed = inner.replace(/\s+/g, " ").trim();
     return `\n\n$$\n${collapsed}\n$$\n\n`;
