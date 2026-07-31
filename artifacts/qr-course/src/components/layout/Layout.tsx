@@ -67,7 +67,7 @@ function TopBar() {
   const active = location.startsWith("/diagnostics");
   const [adminMode, setAdminMode] = useAdminMode();
   const qc = useQueryClient();
-  const { user } = useAuth();
+  const { user, authenticated } = useAuth();
   const logout = useLogout();
   const [resetting, setResetting] = useState(false);
   const [expanding, setExpanding] = useState(false);
@@ -182,24 +182,37 @@ function TopBar() {
 
       <div className="mx-1 h-6 w-px bg-border" />
 
-      {user && (
-        <span
-          className="hidden sm:inline text-sm text-muted-foreground max-w-[12rem] truncate"
-          title={user.email ?? undefined}
-          data-testid="text-user-email"
+      {authenticated ? (
+        <>
+          {user && (
+            <span
+              className="hidden sm:inline text-sm text-muted-foreground max-w-[12rem] truncate"
+              title={user.email ?? undefined}
+              data-testid="text-user-email"
+            >
+              {user.email ?? user.displayName ?? user.username ?? "Account"}
+            </span>
+          )}
+          <button
+            onClick={logout}
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium border border-border hover:bg-secondary"
+            data-testid="button-sign-out"
+            title="Sign out"
+          >
+            <LogOut className="w-4 h-4" />
+            Sign out
+          </button>
+        </>
+      ) : (
+        <a
+          href={`${basePath}/api/auth/google`}
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+          data-testid="button-give-feedback"
+          title="Sign in with Google to leave feedback on this course"
         >
-          {user.email ?? user.displayName ?? user.username ?? "Account"}
-        </span>
+          Give feedback
+        </a>
       )}
-      <button
-        onClick={logout}
-        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium border border-border hover:bg-secondary"
-        data-testid="button-sign-out"
-        title="Sign out"
-      >
-        <LogOut className="w-4 h-4" />
-        Sign out
-      </button>
     </div>
   );
 }

@@ -1,4 +1,3 @@
-import { type ComponentType } from "react";
 import {
   Switch,
   Route,
@@ -11,7 +10,6 @@ import {
 } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { useAuth } from "@/hooks/useAuth";
 import NotFound from "@/pages/not-found";
 
 import Landing from "@/pages/Landing";
@@ -31,65 +29,30 @@ import AdminMode from "@/pages/AdminMode";
 
 const queryClient = new QueryClient();
 
-function LoadingScreen() {
-  return (
-    <div className="flex min-h-[100dvh] items-center justify-center bg-background">
-      <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
-}
-
+// All routes are open — no login required to use the course.
+// In development, useAuth returns a mock user so there is no login wall at all.
+// In production, Google login is available only for the feedback flow (see Layout).
 function HomeRedirect() {
-  const { authenticated, isLoading } = useAuth();
-  if (isLoading) return <LoadingScreen />;
-  if (authenticated) return <Redirect to="/dashboard" />;
-  return <Landing />;
-}
-
-function protectedComponent(Component: ComponentType<any>) {
-  return function Guarded(props: any) {
-    const { authenticated, isLoading } = useAuth();
-    if (isLoading) return <LoadingScreen />;
-    if (!authenticated) return <Redirect to="/" />;
-    return <Component {...props} />;
-  };
+  return <Redirect to="/dashboard" />;
 }
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={HomeRedirect} />
-      <Route path="/dashboard" component={protectedComponent(Dashboard)} />
-      <Route path="/assignments" component={protectedComponent(Assignments)} />
-      <Route
-        path="/assignments/:id/practice"
-        component={protectedComponent(PracticeAssignment)}
-      />
-      <Route
-        path="/assignments/:id"
-        component={protectedComponent(AssignmentRunner)}
-      />
-      <Route path="/analytics" component={protectedComponent(Analytics)} />
-      <Route path="/reasoning" component={protectedComponent(Reasoning)} />
-      <Route
-        path="/reasoning/:id"
-        component={protectedComponent(ReasoningRunner)}
-      />
-      <Route path="/grades" component={protectedComponent(Grades)} />
-      <Route path="/admin" component={protectedComponent(AdminMode)} />
-      <Route path="/diagnostics" component={protectedComponent(Diagnostics)} />
-      <Route
-        path="/weeks/:weekNumber"
-        component={protectedComponent(WeekView)}
-      />
-      <Route
-        path="/lectures/:lectureId"
-        component={protectedComponent(LectureView)}
-      />
-      <Route
-        path="/practice/topic/:topicId"
-        component={protectedComponent(TopicPractice)}
-      />
+      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/assignments" component={Assignments} />
+      <Route path="/assignments/:id/practice" component={PracticeAssignment} />
+      <Route path="/assignments/:id" component={AssignmentRunner} />
+      <Route path="/analytics" component={Analytics} />
+      <Route path="/reasoning" component={Reasoning} />
+      <Route path="/reasoning/:id" component={ReasoningRunner} />
+      <Route path="/grades" component={Grades} />
+      <Route path="/admin" component={AdminMode} />
+      <Route path="/diagnostics" component={Diagnostics} />
+      <Route path="/weeks/:weekNumber" component={WeekView} />
+      <Route path="/lectures/:lectureId" component={LectureView} />
+      <Route path="/practice/topic/:topicId" component={TopicPractice} />
       <Route component={NotFound} />
     </Switch>
   );

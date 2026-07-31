@@ -16,10 +16,22 @@ interface AuthState {
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
+// In development, bypass Google login entirely — return a mock user so the
+// login wall never appears while iterating locally.
+const DEV_USER: AuthUser = {
+  id: 0,
+  username: "dev",
+  email: "dev@localhost",
+  displayName: "Dev User",
+};
+
 export function useAuth(): AuthState {
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["auth-user"],
     queryFn: async () => {
+      if (import.meta.env.DEV) {
+        return { authenticated: true as const, user: DEV_USER };
+      }
       const res = await fetch(`${basePath}/api/auth/user`, {
         credentials: "include",
       });
