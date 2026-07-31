@@ -133,6 +133,8 @@ export async function gradePracticeEssay(opts: {
         "",
         "Then write `feedback` as encouraging Markdown with these sections: **What you got right** (be specific, cite their wording), **What's missing or off** (only genuine errors or gaps that make the answer actually wrong — never nitpick form, grammar, or divergence from the reference when the student is correct), and **How to strengthen it** (1-2 concrete next steps). 4-8 sentences total, neutral and supportive in tone — never snippy.",
         "",
+        "For any math expressions in feedback use \\(...\\) for inline math and \\[...\\] for display math. For currency amounts write the dollar sign as \\$ (e.g. \\$3) — never use a bare $ for currency.",
+        "",
         'Output strict JSON {"correct": boolean, "feedback": string}.',
       ].join("\n"),
       JSON.stringify({

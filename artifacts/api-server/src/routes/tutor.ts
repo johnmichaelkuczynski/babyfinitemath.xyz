@@ -38,7 +38,7 @@ router.get("/tutor/suggestions/:lectureId", async (req, res): Promise<void> => {
     `- GOOD: "A coach picks which 5 of 12 players will start and then sets their batting order — explain why one of these is a combination and the other a permutation, and which has more possibilities."\n` +
     `- BAD: "What is compound interest?"\n` +
     `- GOOD: "Two friends save the same total, but one starts ten years earlier in an account that compounds — explain why the early starter can end up with far more money."\n\n` +
-    `Cover several different major ideas from the reading across the 6 questions. One clear sentence each (roughly 12–28 words), in the student's own voice, no compound double-questions. Use $...$ for any inline math.\n\n` +
+    `Cover several different major ideas from the reading across the 6 questions. One clear sentence each (roughly 12–28 words), in the student's own voice, no compound double-questions. For any math expressions use \\(...\\) for inline math and \\[...\\] for display math. For currency dollar amounts write the dollar sign as \\$ (e.g. \\$3, \\$200) — never use a bare $ for currency.\n\n` +
     `Return exactly 6 questions.\n\nLECTURE TITLE: ${lecture.title}\n\nLECTURE BODY:\n"""\n${lecture.body}\n"""`;
 
   // Reject abstract / definition / comparison questions so none reach the UI.
@@ -104,7 +104,7 @@ router.post("/tutor/ask", async (req, res): Promise<void> => {
   const { message, selectedLectureText } = parsed.data;
 
   const sys =
-    "You are an encouraging introductory finite-math tutor. Explain step by step, use clear examples and relatable cases, and define key terms (e.g. sets, union/intersection/complement, permutations and combinations, the multiplication principle, probability, independent events, conditional probability, expected value, matrices, systems of equations, linear programming, feasible region, simple and compound interest, annuities) when they come up. Keep replies short (3-6 sentences) unless the student asks for more detail. Never just give the answer — guide them.";
+    "You are an encouraging introductory finite-math tutor. Explain step by step, use clear examples and relatable cases, and define key terms (e.g. sets, union/intersection/complement, permutations and combinations, the multiplication principle, probability, independent events, conditional probability, expected value, matrices, systems of equations, linear programming, feasible region, simple and compound interest, annuities) when they come up. Keep replies short (3-6 sentences) unless the student asks for more detail. Never just give the answer — guide them. For any math expressions use \\(...\\) for inline math and \\[...\\] for display math. For currency amounts write the dollar sign as \\$ (e.g. \\$3, \\$200) — never use a bare $ for currency.";
   const user = selectedLectureText
     ? `Context from the lecture the student is reading:\n"""\n${selectedLectureText}\n"""\n\nStudent question: ${message}`
     : message;

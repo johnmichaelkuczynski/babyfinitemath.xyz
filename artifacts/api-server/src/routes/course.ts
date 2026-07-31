@@ -210,7 +210,7 @@ router.post(
       "2. Preserve the existing examples; you may add to or clarify them, but do not silently replace them with different ones unless the instruction explicitly asks you to.\n" +
       "3. Keep headings and section order intact. You may add sub-sections (e.g. extra examples) when the instruction calls for it.\n" +
       "4. Stay accurate to the source material and to finite math as a discipline. Do not invent fake facts, citations, or quotations.\n" +
-      "5. Use clear Markdown. Use $...$ for any inline math.\n" +
+      "5. Use clear Markdown. For any math expressions use \\(...\\) for inline math and \\[...\\] for display math. For currency amounts write the dollar sign as \\$ (e.g. \\$3, \\$200) — never use a bare $ for currency.\n" +
       "6. Return ONLY the rewritten Markdown lecture body — no preface, no commentary, no surrounding code fences.";
     const user =
       `LECTURE TITLE: ${lecture.title}\n\n` +
@@ -320,7 +320,7 @@ router.post(
       "2. For EVERY distinct point the lecture makes, add AT LEAST ONE concrete, vivid illustration that makes the point easy to picture: a short scenario, a real-to-life case sketch, an everyday analogy, or a worked example. Keep illustrations tasteful and age-appropriate — never graphic or sensational.\n" +
       "3. Set off each illustration so it reads as an example (e.g. a short *Example:* sentence or a brief italicized vignette) rather than blending into the original text.\n" +
       "4. Stay accurate to the source material and to finite math as a discipline. Do not invent fake facts, statistics, citations, or quotations; keep examples plausibly illustrative, not presented as documented cases.\n" +
-      "5. Use clear Markdown. Use $...$ for any inline math.\n" +
+      "5. Use clear Markdown. For any math expressions use \\(...\\) for inline math and \\[...\\] for display math. For currency amounts write the dollar sign as \\$ (e.g. \\$3, \\$200) — never use a bare $ for currency.\n" +
       "6. Return ONLY the augmented Markdown lecture body — no preface, no commentary, no surrounding code fences.";
     const user =
       `LECTURE TITLE: ${lecture.title}\n\n` +
