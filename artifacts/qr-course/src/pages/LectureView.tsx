@@ -729,18 +729,32 @@ function TutorPane({
     sendMessage(msg);
   }
 
-  function submitAttempt(question: string, attempt: string) {
+  function submitAttempt(question: string, attempt: string): Promise<string> {
     const a = attempt.trim();
-    if (!a) return;
-    // The student sees only their own answer; the question + grading
-    // instructions are sent to the tutor as hidden context.
+    if (!a) return Promise.resolve("");
+    // Send the question + answer to the tutor as hidden context; the student
+    // sees the feedback inline in the card, not in the main chat history.
     const backendMessage =
       `The student is answering this starter question: "${question}"\n\n` +
       `Their answer: "${a}"\n\n` +
       `Tell them whether it's correct, partly correct, or wrong, point to the ` +
       `specific part of their reasoning that's right or off, then give the ` +
       `correct answer with a brief worked example. Keep it tight.`;
-    sendMessage(backendMessage, a);
+    return new Promise((resolve, reject) => {
+      ask.mutate(
+        {
+          data: {
+            message: backendMessage,
+            lectureId: lectureId ?? undefined,
+            selectedLectureText: undefined,
+          },
+        },
+        {
+          onSuccess: (res) => resolve(res.text),
+          onError: (e) => reject(e),
+        },
+      );
+    });
   }
 
   const visibleSuggestions = (suggestions ?? []).filter((_, i) => !dismissed.has(i));
