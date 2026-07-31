@@ -12,6 +12,11 @@ interface MarkdownRendererProps {
 function normalize(src: string): string {
   let s = src.replace(/\r\n/g, "\n");
 
+  // Escape bare currency $ signs ($ followed by a digit, not already escaped).
+  // Must run BEFORE any $...$ math processing so currency amounts like $200 or
+  // $1.50 are never swallowed as math delimiters.
+  s = s.replace(/(?<!\\)\$(?=\d)/g, "\\$");
+
   // Convert \[...\] display math → $$...$$
   s = s.replace(/\\\[([\s\S]*?)\\\]/g, (_m, inner: string) => {
     const collapsed = inner.replace(/\s+/g, " ").trim();
