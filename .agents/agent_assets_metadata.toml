@@ -29,3 +29,66 @@ id = "Qpzwo_NPMNo_tjMm6_ppp"
 uri = "file://artifacts/course-video/public/audio/bg_music.mp3"
 type = "audio"
 title = "background music"
+
+[[outputs]]
+id = "GO8B7WRHd0CXA3m7WoGqP"
+uri = "file://attached_assets/generated_audio/vo_tutor.mp3"
+type = "audio"
+title = "vo_tutor"
+description = "Text-to-speech audio: Ask the built-in tutor anything. Answers stream in, grounded in the exact section you're reading."
+
+[[outputs]]
+id = "aXHBB-gFf0VMDRNC-pxlK"
+uri = "file://attached_assets/generated_audio/vo_intro.mp3"
+type = "audio"
+title = "vo_intro"
+description = "Text-to-speech audio: Prompt Engineering. A complete four-week course — taught, tutored, and graded entirely by A I."
+
+[[outputs]]
+id = "9E4hCJHZzU-SyHI_Qla4q"
+uri = "file://attached_assets/generated_audio/vo_dashboard.mp3"
+type = "audio"
+title = "vo_dashboard"
+description = "Text-to-speech audio: Your dashboard tracks every assignment, practice session, and streak."
+
+[[outputs]]
+id = "6qnMLV9C1Xyo8-0Y3L95P"
+uri = "file://attached_assets/generated_audio/vo_lecture.mp3"
+type = "audio"
+title = "vo_lecture"
+description = "Text-to-speech audio: Read every lesson at three depths — short, medium, or long."
+
+[[outputs]]
+id = "rG5wFga-w_Xrxdkl_jBj1"
+uri = "file://attached_assets/generated_audio/vo_practice.mp3"
+type = "audio"
+title = "vo_practice"
+description = "Text-to-speech audio: Adaptive practice raises the difficulty as you improve, and eases off when you miss."
+
+[[outputs]]
+id = "qptytx1pzpNvdViWmR_du"
+uri = "file://attached_assets/generated_audio/vo_curriculum.mp3"
+type = "audio"
+title = "vo_curriculum"
+description = "Text-to-speech audio: Four weeks. Twenty-eight topics. From foundations to real applications."
+
+[[outputs]]
+id = "GkuK2-TCWUdnayMxaeDu5"
+uri = "file://attached_assets/generated_audio/vo_analytics.mp3"
+type = "audio"
+title = "vo_analytics"
+description = "Text-to-speech audio: Analytics show your mastery of every topic at a glance."
+
+[[outputs]]
+id = "-1f3ARw5nnWD8-FCEePVa"
+uri = "file://attached_assets/generated_audio/vo_grades.mp3"
+type = "audio"
+title = "vo_grades"
+description = "Text-to-speech audio: Homework, a midterm, and a final — graded by A I, with written feedback and two-layer authorship detection."
+
+[[outputs]]
+id = "JooeLiaJ7udW4Ir-M8H3u"
+uri = "file://attached_assets/generated_audio/vo_outro.mp3"
+type = "audio"
+title = "vo_outro"
+description = "Text-to-speech audio: Prompt Engineering. Learn to write prompts that get the results you want."
