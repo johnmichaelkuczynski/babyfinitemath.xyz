@@ -285,7 +285,7 @@ function deterministicFeedback(
         : " Your reasoning was solid across the items.";
     return `Thanks for working through this reasoning check.${overall?.value ? ` You scored ${overall.value}.` : ""}${weakLine} Remember that a strong answer follows only from the reasons given — distinguish what is stated, what is assumed, and what is merely plausible.`;
   }
-  return `Thanks for working through these finite-math cases.${overall?.value ? ` You scored ${overall.value}.` : ""} Strong answers here come from reasoning about the case — reaching for the tool that fits it, pointing to the detail that decides it (does order matter? do the groups overlap? are the events independent?), and resisting 'obvious' guesses like 'just add the two groups' or 'a 99%-accurate test is almost always right'.`;
+  return `Thanks for working through these prompt-engineering cases.${overall?.value ? ` You scored ${overall.value}.` : ""} Strong answers here come from reasoning about the scenario — reaching for the technique that fits it, pointing to the detail that decides it (is the failure about format or facts? is the task pattern-shaped or reasoning-shaped? is the input untrusted?), and resisting 'obvious' guesses like 'just tell the model to try harder' or 'the model is simply broken'.`;
 }
 
 export async function generateFeedback(
@@ -298,7 +298,7 @@ export async function generateFeedback(
     .join("\n");
   const system =
     instrument === "subject"
-      ? "You are an instructor giving warm, specific feedback on a student's finite-math reasoning check (realistic short cases about the course material — counting, probability, sets, optimization, money). 2-4 sentences. Note their overall performance and offer one concrete way to reason better about cases. Use only the metrics provided; do not invent numbers. Plain prose, no markdown headings."
+      ? "You are an instructor giving warm, specific feedback on a student's prompt-engineering reasoning check (realistic short cases about the course material — applying prompting techniques like few-shot examples, chain-of-thought, structured output, grounding, and diagnosing model failures). 2-4 sentences. Note their overall performance and offer one concrete way to reason better about prompting scenarios. Use only the metrics provided; do not invent numbers. Plain prose, no markdown headings."
       : "You are a reasoning instructor giving warm, specific feedback on a student's general-reasoning check. 2-4 sentences. Note overall performance and the skill areas to strengthen, using only the metrics provided. Plain prose, no markdown headings.";
   const user = `Assessment: ${assessmentTitle}\nResult summary: ${summary.headline}\nMetrics:\n${metricsText}`;
   try {
@@ -412,17 +412,17 @@ async function generateSubjectVariant(
 ): Promise<GeneratedItemContent[]> {
   const spec = genSpecFor("subject", phase);
   const system =
-    "You are an assessment author writing ORIGINAL finite-math questions for an intro course. " +
-    "Every question must be a short, realistic CASE (a concrete everyday scenario about finite math — sets and overlaps, counting with permutations/combinations, probability, matrices, linear programming, or interest and the math of money) that rewards REASONING about the case, never recall of a definition or a one-word fact. No heavy calculations — reward plain-language reasoning. " +
+    "You are an assessment author writing ORIGINAL prompt-engineering questions for this course. " +
+    "Every question must be a short, realistic CASE (a concrete prompting scenario — a task to prompt for, a prompt that misbehaves, or a model failure to diagnose, covering techniques like few-shot examples, chain-of-thought and step-by-step reasoning, role/system prompting, structured output and delimiters, grounding/retrieval, sampling settings, or prompt-injection defenses) that rewards REASONING about the scenario, never recall of a definition or a one-word fact. Reward plain-language reasoning about which technique fits and why. " +
     "Each has exactly four answer options with one clearly best, well-supported answer. " +
-    "List the CORRECT option FIRST, followed by three plausible but worse distractors (an over-simple single-cause claim, an 'obvious'/sensational answer, or an irrelevant one). " +
+    "List the CORRECT option FIRST, followed by three plausible but worse distractors (an over-simple single-cause claim, an 'obvious' but wrong answer, or an irrelevant one). " +
     "Also write a one-sentence model answer explaining why the first option is best. " +
-    "Keep the subject matter tasteful and age-appropriate — never graphic or sensational. " +
+    "Keep the subject matter tasteful and professional — never graphic or sensational. " +
     `Difficulty: ${spec.level} ` +
     `Stay strictly within this scope: ${spec.topicFocus} ` +
     'Respond ONLY as JSON of the form {"items":[{"prompt":"short case ending in a question","options":["best","worse","worse","worse"],"modelAnswer":"why the first option is best"}]}.';
   const user =
-    `Write ${count} new, distinct finite-math case questions within the scope above.\n` +
+    `Write ${count} new, distinct prompt-engineering case questions within the scope above.\n` +
     `For style only (do NOT copy these): ${JSON.stringify(examplePrompts)}.`;
   const out = await chatJson<{
     items?: { prompt?: unknown; options?: unknown; modelAnswer?: unknown }[];

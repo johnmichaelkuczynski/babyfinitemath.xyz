@@ -36,7 +36,7 @@ export function Scene1() {
               transition={{ duration: 0.8 }}
               className="text-[4vw] font-display font-bold text-[#1A2B3D] leading-tight"
             >
-              Useful math, without the infinite.
+              Master how to steer AI models.
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -44,8 +44,8 @@ export function Scene1() {
               transition={{ duration: 0.8 }}
               className="text-[1.5vw] text-[#4A5568] max-w-2xl mt-6"
             >
-              A complete, plain-language introduction to finite math. <br/>
-              Taught, tutored, drilled, and graded by AI.
+              A complete, adult-level course in Prompt Engineering. <br/>
+              Taught, tutored, drilled, and graded entirely by AI.
             </motion.p>
           </motion.div>
         ) : (

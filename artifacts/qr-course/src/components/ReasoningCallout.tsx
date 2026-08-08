@@ -25,7 +25,7 @@ const BLURBS: Record<Phase, string> = {
 };
 
 const INSTRUMENT_LABELS: Record<Instrument, string> = {
-  subject: "Finite Math",
+  subject: "Prompt Engineering",
   general: "General Reasoning",
 };
 

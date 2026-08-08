@@ -29,7 +29,7 @@ const features = [
   {
     icon: ClipboardCheck,
     title: "AI-Graded Work",
-    body: "Homework, a unit test, and a final — each with written feedback.",
+    body: "Weekly homework, a timed midterm, and a cumulative final — each with written feedback.",
   },
   {
     icon: ShieldCheck,
@@ -38,20 +38,64 @@ const features = [
   },
   {
     icon: BarChart3,
-    title: "One Unit, 8 Topics",
-    body: "From what finite math is all the way to putting it to work in the real world.",
+    title: "Four Weeks, 28 Topics",
+    body: "From what prompt engineering is all the way to shipping a real AI feature.",
   },
 ];
 
-const topics = [
-  { n: "1.1", title: "What finite math is: useful math without the infinite" },
-  { n: "1.2", title: "Sets and logic: organizing the world into categories" },
-  { n: "1.3", title: "The art of counting: permutations and combinations" },
-  { n: "1.4", title: "Probability: measuring what's likely" },
-  { n: "1.5", title: "Matrices: organizing and solving with grids of numbers" },
-  { n: "1.6", title: "Linear programming: getting the most out of limited resources" },
-  { n: "1.7", title: "The math of money: interest, loans, and growth" },
-  { n: "1.8", title: "Putting finite math to work (Capstone)" },
+const weeks = [
+  {
+    n: 1,
+    title: "Foundations: how models respond to prompts",
+    topics: [
+      { n: "1.1", title: "What prompt engineering is (and why it works)" },
+      { n: "1.2", title: "How language models read and continue text" },
+      { n: "1.3", title: "Anatomy of a prompt: instruction, context, input, output" },
+      { n: "1.4", title: "Being specific: clarity, detail, and constraints" },
+      { n: "1.5", title: "Setting role and tone (system vs. user framing)" },
+      { n: "1.6", title: "Controlling format and length" },
+      { n: "1.7", title: "Common failure modes and how to spot them" },
+    ],
+  },
+  {
+    n: 2,
+    title: "Core techniques",
+    topics: [
+      { n: "2.1", title: "Zero-shot vs. few-shot prompting" },
+      { n: "2.2", title: "Writing good examples (and why bad ones hurt)" },
+      { n: "2.3", title: "Chain-of-thought: asking for reasoning" },
+      { n: "2.4", title: "Decomposition: breaking big tasks into steps" },
+      { n: "2.5", title: "Giving the model context and reference material" },
+      { n: "2.6", title: "Using delimiters and structure (XML, markdown, JSON)" },
+      { n: "2.7", title: "Iterating: how to debug and refine a prompt" },
+    ],
+  },
+  {
+    n: 3,
+    title: "Advanced patterns and reliability",
+    topics: [
+      { n: "3.1", title: "Getting structured output (JSON and schemas)" },
+      { n: "3.2", title: "Prompt chaining: linking multiple calls" },
+      { n: "3.3", title: "Self-critique and revision prompts" },
+      { n: "3.4", title: "Grounding with retrieval (RAG in plain terms)" },
+      { n: "3.5", title: "Tool use and function calling" },
+      { n: "3.6", title: "Controlling randomness: temperature and sampling" },
+      { n: "3.7", title: "Consistency, evaluation, and testing prompts" },
+    ],
+  },
+  {
+    n: 4,
+    title: "Applications, safety, and building systems",
+    topics: [
+      { n: "4.1", title: "Prompts for writing, summarizing, and extraction" },
+      { n: "4.2", title: "Prompts for coding and data tasks" },
+      { n: "4.3", title: "Prompts for analysis and decision support" },
+      { n: "4.4", title: "Prompt injection and security risks" },
+      { n: "4.5", title: "Reducing hallucination and bias" },
+      { n: "4.6", title: "Building reusable prompt templates" },
+      { n: "4.7", title: "From prompt to product: designing an AI feature" },
+    ],
+  },
 ];
 
 export default function Landing() {
@@ -63,7 +107,7 @@ export default function Landing() {
             <Search className="w-4 h-4" />
           </div>
           <span className="font-serif font-semibold text-lg tracking-tight">
-            Basic Finite Math
+            Prompt Engineering
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -90,15 +134,16 @@ export default function Landing() {
         <section className="max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary text-secondary-foreground text-xs font-medium mb-6">
             <BarChart3 className="w-3.5 h-3.5" />
-            A complete, one-unit introduction to finite math
+            A complete, four-week course in prompt engineering
           </div>
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-primary leading-tight mb-5">
-            The practical, countable math you actually use. Let's understand it together.
+            Learn to write prompts that get the results you want. Let's build the skill together.
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
             A self-paced course that teaches, tutors, drills, and grades you —
-            finite math in plain language, developed from first principles —
-            every idea explained in plain words. Built for adults approaching the subject for the first time.
+            prompt engineering in plain language, built from first principles,
+            every idea explained clearly and shown at work. Written for adults
+            learning to get reliable results from language models.
           </p>
           <div className="flex items-center justify-center gap-3">
             <a href={`${basePath}/api/auth/google`}>
@@ -133,20 +178,34 @@ export default function Landing() {
           <h2 className="text-center font-serif font-semibold text-xl mb-6">
             The Curriculum
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {topics.map((t) => (
+          <div className="flex flex-col gap-6">
+            {weeks.map((w) => (
               <div
-                key={t.n}
-                className="flex items-center gap-4 rounded-lg border border-border bg-card p-5"
+                key={w.n}
+                className="rounded-lg border border-border bg-card p-6"
               >
-                <div className="w-10 h-10 shrink-0 rounded-md bg-primary text-primary-foreground flex items-center justify-center font-serif font-bold text-sm">
-                  {t.n}
-                </div>
-                <div>
-                  <div className="text-xs uppercase tracking-wider text-muted-foreground">
-                    Topic {t.n}
+                <div className="flex items-center gap-4 mb-5">
+                  <div className="w-10 h-10 shrink-0 rounded-md bg-primary text-primary-foreground flex items-center justify-center font-serif font-bold text-sm">
+                    {w.n}
                   </div>
-                  <div className="font-medium">{t.title}</div>
+                  <div>
+                    <div className="text-xs uppercase tracking-wider text-muted-foreground">
+                      Week {w.n}
+                    </div>
+                    <div className="font-serif font-semibold text-lg">
+                      {w.title}
+                    </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {w.topics.map((t) => (
+                    <div key={t.n} className="flex items-start gap-3">
+                      <span className="text-xs font-bold text-primary tabular-nums mt-0.5 w-7 shrink-0">
+                        {t.n}
+                      </span>
+                      <span className="text-sm">{t.title}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
@@ -155,7 +214,7 @@ export default function Landing() {
       </main>
 
       <footer className="border-t border-border px-6 py-6 text-center text-sm text-muted-foreground">
-        Basic Finite Math — where the curriculum, the tutor, the grader, and the
+        Prompt Engineering — where the curriculum, the tutor, the grader, and the
         integrity check all live in one room.
       </footer>
     </div>

@@ -21,9 +21,24 @@ const router: IRouter = Router();
 
 const WEEK_TITLES: Record<number, { title: string; summary: string }> = {
   1: {
-    title: "Basic Finite Math: Useful Math Without the Infinite",
+    title: "Foundations: how models respond to prompts",
     summary:
-      "What finite math really is and why it's the practical, countable math you actually use without any calculus, how sets and logic organize the world into clear categories, how the art of counting (permutations and combinations) tells you how many ways something can happen, how probability measures what's likely, how matrices organize and solve with grids of numbers, how linear programming gets the most out of limited resources, how the math of money handles interest, loans, and growth, and how it all comes together on real problems — all in plain language, developed from first principles.",
+      "What a prompt actually is, how language models read and continue text, and the core anatomy of a clear, effective instruction — instruction, context, input, and output. How specificity, constraints, role, tone, format, and length shape a model's output, and how to recognize the common failure modes before they cost you.",
+  },
+  2: {
+    title: "Core techniques",
+    summary:
+      "The workhorse methods that reliably raise output quality: zero-shot versus few-shot prompting, writing examples that help instead of hurt, chain-of-thought reasoning, decomposing big tasks into steps, supplying context and reference material, structuring prompts with delimiters, and the discipline of iterating and debugging a prompt.",
+  },
+  3: {
+    title: "Advanced patterns and reliability",
+    summary:
+      "Getting consistent, structured, grounded outputs: JSON and schemas, prompt chaining across multiple calls, self-critique and revision, grounding with retrieval (RAG in plain terms), tool use and function calling, controlling randomness with temperature and sampling, and evaluating and testing prompts for consistency.",
+  },
+  4: {
+    title: "Applications, safety, and building systems",
+    summary:
+      "Applying prompting to real work — writing, summarizing, extraction, coding, data tasks, analysis, and decision support — while guarding against prompt injection, reducing hallucination and bias, building reusable prompt templates, and assembling prompts into a dependable AI feature.",
   },
 };
 
@@ -98,7 +113,7 @@ async function buildWeek(weekNumber: number) {
 }
 
 router.get("/course/overview", async (_req, res) => {
-  const weeks = await Promise.all([1].map(buildWeek));
+  const weeks = await Promise.all([1, 2, 3, 4].map(buildWeek));
   const assignmentsTotal = weeks.reduce((s, w) => s + w.assignments.length, 0);
   const assignmentsCompleted = weeks.reduce(
     (s, w) => s + w.assignments.filter((a) => a.status === "submitted").length,
@@ -112,7 +127,7 @@ router.get("/course/overview", async (_req, res) => {
 
   res.json(
     GetCourseOverviewResponse.parse({
-      title: "Basic Finite Math",
+      title: "Prompt Engineering",
       weeks,
       totals: { assignmentsCompleted, assignmentsTotal, practiceCount },
     }),
@@ -124,7 +139,7 @@ router.get("/course/weeks/:weekNumber", async (req, res): Promise<void> => {
     ? req.params.weekNumber[0]
     : req.params.weekNumber;
   const weekNumber = parseInt(raw ?? "", 10);
-  if (!Number.isFinite(weekNumber) || weekNumber < 1 || weekNumber > 1) {
+  if (!Number.isFinite(weekNumber) || weekNumber < 1 || weekNumber > 4) {
     res.status(400).json({ error: "invalid weekNumber" });
     return;
   }
@@ -203,13 +218,13 @@ router.post(
     const sourceBody = (base && base.trim().length > 0 ? base : lecture.body).trim();
 
     const sys =
-      "You are an introductory finite-math lecturer revising your own lecture at a student's request. " +
+      "You are a prompt-engineering lecturer revising your own lecture at a student's request. " +
       "You are given the CURRENT lecture and ONE instruction from the student about how to revise it. " +
       "Apply the instruction faithfully. ABSOLUTE RULES, no exceptions:\n" +
       "1. KEEP every concept, claim, and learning objective from the current lecture. Never drop material or change what the lecture teaches — only adjust how it is presented per the instruction.\n" +
       "2. Preserve the existing examples; you may add to or clarify them, but do not silently replace them with different ones unless the instruction explicitly asks you to.\n" +
       "3. Keep headings and section order intact. You may add sub-sections (e.g. extra examples) when the instruction calls for it.\n" +
-      "4. Stay accurate to the source material and to finite math as a discipline. Do not invent fake facts, citations, or quotations.\n" +
+      "4. Stay accurate to the source material and to prompt engineering as a discipline. Do not invent fake facts, citations, or quotations.\n" +
       "5. Use clear Markdown. For any math expressions use \\(...\\) for inline math and \\[...\\] for display math. For currency amounts write the dollar sign as \\$ (e.g. \\$3, \\$200) — never use a bare $ for currency.\n" +
       "6. Return ONLY the rewritten Markdown lecture body — no preface, no commentary, no surrounding code fences.";
     const user =
@@ -314,12 +329,12 @@ router.post(
     const sourceBody = (base && base.trim().length > 0 ? base : lecture.body).trim();
 
     const sys =
-      "You are an introductory finite-math lecturer adding illustrations to your own lecture. " +
+      "You are a prompt-engineering lecturer adding illustrations to your own lecture. " +
       "You are given the CURRENT lecture. Return the SAME lecture, unchanged in what it teaches, but with vivid illustrations added. ABSOLUTE RULES, no exceptions:\n" +
       "1. KEEP every concept, claim, heading, section, and learning objective exactly as they are, in the same order. Do not remove, reorder, or rewrite the existing explanation — only ADD to it.\n" +
-      "2. For EVERY distinct point the lecture makes, add AT LEAST ONE concrete, vivid illustration that makes the point easy to picture: a short scenario, a real-to-life case sketch, an everyday analogy, or a worked example. Keep illustrations tasteful and age-appropriate — never graphic or sensational.\n" +
+      "2. For EVERY distinct point the lecture makes, add AT LEAST ONE concrete, vivid illustration that makes the point easy to picture: a short prompting scenario, a real-to-life case sketch, an everyday analogy, or a worked prompt example. Keep illustrations tasteful and professional — never graphic or sensational.\n" +
       "3. Set off each illustration so it reads as an example (e.g. a short *Example:* sentence or a brief italicized vignette) rather than blending into the original text.\n" +
-      "4. Stay accurate to the source material and to finite math as a discipline. Do not invent fake facts, statistics, citations, or quotations; keep examples plausibly illustrative, not presented as documented cases.\n" +
+      "4. Stay accurate to the source material and to prompt engineering as a discipline. Do not invent fake facts, statistics, citations, or quotations; keep examples plausibly illustrative, not presented as documented cases.\n" +
       "5. Use clear Markdown. For any math expressions use \\(...\\) for inline math and \\[...\\] for display math. For currency amounts write the dollar sign as \\$ (e.g. \\$3, \\$200) — never use a bare $ for currency.\n" +
       "6. Return ONLY the augmented Markdown lecture body — no preface, no commentary, no surrounding code fences.";
     const user =

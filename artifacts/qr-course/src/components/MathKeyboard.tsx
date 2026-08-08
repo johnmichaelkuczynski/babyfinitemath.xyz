@@ -76,8 +76,8 @@ interface MathKeyboardProps {
  * caret position when a symbol is inserted.
  *
  * Keys are grouped into sections (Arithmetic · Algebra · Sets · Logic · Stats)
- * separated by thin vertical dividers, covering every symbol needed across all
- * eight topics in the Basic Finite Math curriculum.
+ * separated by thin vertical dividers, covering every symbol a learner may need
+ * while working through the Prompt Engineering curriculum.
  */
 export function MathKeyboard({ onInsert, keys = DEFAULT_KEYS, className }: MathKeyboardProps) {
   return (

@@ -99,7 +99,7 @@ export function setupAuth(app: Express) {
   app.use(
     session({
       store: pgStore,
-      secret: process.env.SESSION_SECRET || "basic-finite-math-dev-secret-key",
+      secret: process.env.SESSION_SECRET || "prompt-engineering-dev-secret-key",
       resave: false,
       saveUninitialized: false,
       cookie: {
@@ -138,7 +138,7 @@ export function setupAuth(app: Express) {
         const prodDomain = (process.env.REPLIT_DOMAINS || "")
           .split(",")[0]
           ?.trim();
-        return `https://${prodDomain || "basicfinitemath.ink"}${CALLBACK_PATH}`;
+        return `https://${prodDomain}${CALLBACK_PATH}`;
       }
       if (process.env.REPLIT_DEV_DOMAIN) {
         return `https://${process.env.REPLIT_DEV_DOMAIN}${CALLBACK_PATH}`;
@@ -155,8 +155,6 @@ export function setupAuth(app: Express) {
       [
         ...(process.env.REPLIT_DOMAINS || "").split(",").map((d) => d.trim()),
         process.env.REPLIT_DEV_DOMAIN || "",
-        "basicfinitemath.ink",
-        "www.basicfinitemath.ink",
         "localhost:5000",
       ]
         .filter(Boolean)

@@ -25,7 +25,7 @@ export function Scene4() {
           {/* Left Column: Lecture */}
           <div className="flex-[3] flex flex-col border-r border-[#E2E8F0] bg-white h-full relative">
             <div className="p-4 border-b border-[#E2E8F0] flex items-center justify-between">
-              <div className="text-sm font-medium text-[#718096]">1.2 Sets and logic: organizing the world into categories</div>
+              <div className="text-sm font-medium text-[#718096]">1.2 Few-shot prompting: guiding the model with examples</div>
               <div className="flex items-center bg-[#EFECE6] rounded-md p-1">
                 <div className={`px-3 py-1 text-xs font-medium rounded ${phase === 0 ? 'bg-white shadow text-[#1A2B3D]' : 'text-[#718096]'}`}>Short</div>
                 <div className={`px-3 py-1 text-xs font-medium rounded ${phase === 1 ? 'bg-white shadow text-[#1A2B3D]' : 'text-[#718096]'}`}>Medium</div>
@@ -33,7 +33,7 @@ export function Scene4() {
               </div>
             </div>
             <div className="flex-1 p-10 overflow-hidden relative">
-              <motion.h1 className="text-3xl font-display font-bold text-[#1A2B3D] mb-6">When groups overlap</motion.h1>
+              <motion.h1 className="text-3xl font-display font-bold text-[#1A2B3D] mb-6">Writing effective examples</motion.h1>
               
               <AnimatePresence mode="popLayout">
                 {phase === 0 ? (
@@ -44,8 +44,8 @@ export function Scene4() {
                     exit={{ opacity: 0, y: -10 }}
                     className="text-lg text-[#4A5568] leading-relaxed space-y-4"
                   >
-                    <p>A set is just a well-defined collection — the people in a club, the cards in a deck.</p>
-                    <p>When two sets overlap, adding their sizes counts whatever they share twice, so you subtract the overlap.</p>
+                    <p>Few-shot prompting involves providing the model with examples of the input-output pairs you want, demonstrating the exact pattern it should follow.</p>
+                    <p>Giving just 2-3 examples drastically reduces formatting errors compared to providing instructions alone.</p>
                   </motion.div>
                 ) : (
                   <motion.div
@@ -54,12 +54,12 @@ export function Scene4() {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-lg text-[#4A5568] leading-relaxed space-y-4"
                   >
-                    <p>A set is just a well-defined collection — the people in a club, the cards in a deck.</p>
-                    <p>When two sets overlap, adding their sizes counts whatever they share twice, so you subtract the overlap.</p>
-                    <p>Picture two clubs: 20 hikers and 15 kayakers, with 6 people in both. Adding 20 + 15 counts those 6 twice — so the real number of people is <em>fewer</em> than 35.</p>
+                    <p>Few-shot prompting involves providing the model with examples of the input-output pairs you want, demonstrating the exact pattern it should follow.</p>
+                    <p>Giving just 2-3 examples drastically reduces formatting errors compared to providing instructions alone.</p>
+                    <p>When providing examples, ensure they represent the actual variety of inputs the model will face in production. A narrow set of examples will bias the model's responses.</p>
                     <div className="bg-[#FDFCFB] p-4 border border-[#E2E8F0] rounded-md font-mono text-sm mt-4 text-[#1A2B3D]">
-                      |A ∪ B| = |A| + |B| − |A ∩ B|<br/>
-                      20 + 15 − 6 = 29
+                      User: The service was terrible. -&gt; Negative<br/>
+                      User: I love this new feature! -&gt; Positive
                     </div>
                   </motion.div>
                 )}

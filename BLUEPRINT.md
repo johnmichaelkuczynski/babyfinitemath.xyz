@@ -1,12 +1,12 @@
-# Basic Finite Math — App Blueprint
+# Prompt Engineering — App Blueprint
 
-A complete architectural blueprint for the Basic Finite Math one-unit intro course on finite math. This document is the single reference for what the app does, how it's wired, and the contracts between pieces. For day-to-day commands and gotchas see `replit.md`.
+A complete architectural blueprint for the Prompt Engineering four-week intro course on prompt engineering. This document is the single reference for what the app does, how it's wired, and the contracts between pieces. For day-to-day commands and gotchas see `replit.md`.
 
 ---
 
 ## 1. Product summary
 
-Basic Finite Math is a self-paced, single-user, no-login web course covering a one-unit, plain-language intro to finite math — the practical math of counting, chance, and decisions you can actually finish (8 topics, from "what finite math is" through putting finite math to work). Students read AI-rewritten lecture notes at three lengths, ask an AI tutor scoped to the section they're reading, drill on adaptive practice problems, and submit homework / a unit test / a final that are AI-graded and AI-detection-screened.
+Prompt Engineering is a self-paced, single-user, no-login web course covering a four-week, plain-language intro to prompt engineering — the craft of designing instructions that make language models produce accurate, consistent, useful output (4 weeks × 7 topics = 28 lectures, from "what prompt engineering is" through "from prompt to product"). Students read AI-rewritten lecture notes at three lengths, ask an AI tutor scoped to the section they're reading, drill on adaptive practice problems, and submit weekly homework / a midterm / a final that are AI-graded and AI-detection-screened.
 
 The product surface is two deployable artifacts in one pnpm monorepo:
 
@@ -31,7 +31,7 @@ Source: `lib/db/src/schema/course.ts`.
 ```
 topics ──< lectures              (one topic, one lecture per length)
 topics ──< problems              (problems tagged to a topic for analytics)
-assignments ──< problems         (homework / test / midterm / final)
+assignments ──< problems         (homework / midterm / final)
 assignments ──< attempts ──< answers
                                 ↑ per-answer keystroke trace + AI scores
 practice_sessions ──< practice_problems ──< practice_attempts
@@ -60,7 +60,7 @@ Tag groups and what they own:
 | `course` | `GET /course/overview`, `GET /course/weeks/{n}`, `GET /course/lectures/{id}` | Read the static course tree. Lectures return Short/Medium/Long bodies. |
 | `tutor` | `POST /tutor/ask` (SSE), `GET /tutor/suggestions/{lectureId}` | Streaming AI tutor scoped to a lecture section. Suggestions are pre-generated starter questions. |
 | `practice` | `POST /practice/sessions`, `POST /practice/sessions/{id}/next`, `POST /practice/sessions/{id}/attempts` | Adaptive practice: server generates the next problem, scoring it adjusts session `difficulty`. |
-| `assignments` | `GET /assignments`, `GET /assignments/{id}`, `POST /assignments/{id}/attempt`, `PUT /assignments/{id}/attempts/{aid}/answers/{pid}`, `POST /assignments/{id}/attempts/{aid}/submit` | Homework / test flow. Submit endpoint triggers AI grade + detection per answer. |
+| `assignments` | `GET /assignments`, `GET /assignments/{id}`, `POST /assignments/{id}/attempt`, `PUT /assignments/{id}/attempts/{aid}/answers/{pid}`, `POST /assignments/{id}/attempts/{aid}/submit` | Homework / midterm / final flow. Submit endpoint triggers AI grade + detection per answer. |
 | `analytics` | `GET /analytics/summary`, `GET /analytics/topics`, `GET /analytics/activity` | KPIs, topic mastery, recent activity. |
 | `detection` | `POST /detection/scan` | Run AI + diachronic detection on an arbitrary text + trace. Used directly by the diagnostics page. |
 | `diagnostics` | `GET /diagnostics/system`, `POST /diagnostics/synthetic-run`, `POST /diagnostics/quality-control`, `POST /diagnostics/expand-lectures`, `POST /diagnostics/reset` | Self-tests and seed maintenance. See §6. |
@@ -145,7 +145,7 @@ It adds penalty points for:
 | `longestBulkInsertChars > 40` *or* `longestBulkInsertChars / textLen > 0.4` | +0.50 | One paste covers most of the answer. |
 | `bulkInsertCount >= 2 && longestBulkInsert > 25` | +0.15 | Multiple paste events. |
 | `keystrokeCount / textLen < 0.6` with `textLen > 30` | +0.30 | Far fewer keys pressed than characters of output — paste-like. |
-| `charsPerSecond > 12` with `textLen > 30` | +0.20 | Sustained typing speed no human freshman maintains. |
+| `charsPerSecond > 12` with `textLen > 30` | +0.20 | Sustained typing speed no human learner maintains. |
 | `longestBulkInsert > 30 && rewriteSegments >= 2` | +0.15 | Big paste followed by reword passes — the giveaway pattern. |
 
 Clamped to `[0, 1]`. `diachronicFlagged = diachronicScore >= 0.55`.
@@ -178,7 +178,7 @@ Steps:
 
 1. **Environment** — `DATABASE_URL` present.
 2. **Database** — `SELECT 1` round-trip.
-3. **Database** — course content is seeded (≥8 topics, ≥1 lecture / assignment / problem).
+3. **Database** — course content is seeded (≥28 topics, ≥1 lecture / assignment / problem).
 4. **OpenAI** — fast-model chat completion returns non-empty text.
 5. **OpenAI** — JSON mode returns `{ ok: true }`.
 6. **Detection** — heuristic+scoring pipeline returns numbers for a benign sentence.
@@ -201,7 +201,7 @@ Simulates a real student session against the live DB and reports each leg pass/f
 
 Independently re-derives the answer to a sample of course problems and verifies each seeded answer key is legitimate. Returns `{ ok, generatedAt, steps[] }` like the other diagnostics. Stages:
 
-1. Collect every assignment problem joined to its assignment, grouped by unit, and sample up to 12 with a guaranteed per-unit quota so every unit is covered even if its problem count is uneven.
+1. Collect every assignment problem joined to its assignment, grouped by week, and sample up to 12 with a guaranteed per-week quota so every week is covered even if its problem count is uneven.
 2. For each sampled problem, run a **two-phase** check: (a) the LLM independently re-derives an answer from the prompt **alone**, blind to the seeded key, so the verdict can't just rubber-stamp the key; (b) a second LLM call judges whether the seeded key is legitimate given the prompt + the independent answer, using the grader's semantic-equivalence philosophy — accepting any correct on-topic short answer and flagging only genuinely defective keys (wrong, off-topic, self-contradictory, contradicted on substance, or ungradeable). Returns `{ legitimate, confidence, rationale }`; malformed verdicts are treated as failures, not passes.
 3. A legitimate key passes its step; a flagged key fails its step with the model's rationale. A final summary step reports the legitimate/flagged tally.
 
@@ -222,7 +222,7 @@ React + Vite + Tailwind. Routes:
 | `/weeks/:weekNumber` | `WeekView` | List of week's lectures and assignments |
 | `/lectures/:lectureId` | `LectureView` | Lecture body + Short/Medium/Long toggle + right-rail tutor / practice |
 | `/practice/topic/:topicId` | `TopicPractice` | Adaptive single-topic drill |
-| `/assignments` | `Assignments` | All homework / tests / midterm / final |
+| `/assignments` | `Assignments` | All homework / midterm / final |
 | `/assignments/:id` | `AssignmentRunner` | Take + review an assignment; shows AI grade + detection per answer |
 | `/analytics` | `Analytics` | KPIs, topic mastery table, recent activity |
 | `/diagnostics` | `Diagnostics` | Operator self-test UI (see §6) |

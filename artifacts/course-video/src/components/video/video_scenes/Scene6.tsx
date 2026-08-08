@@ -25,7 +25,7 @@ export function Scene6() {
       <AppShell activeTab="Assignments">
         <div className="p-10 w-full h-full flex flex-col max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-8">
-            <h2 className="text-2xl font-display font-bold text-[#1A2B3D]">Practice: The Art of Counting</h2>
+            <h2 className="text-2xl font-display font-bold text-[#1A2B3D]">Practice: Reasoning and Output</h2>
             <div className="flex items-center gap-2 text-sm">
               <span className="text-[#718096]">Streak: 3</span>
               <div className="flex gap-1">
@@ -52,16 +52,16 @@ export function Scene6() {
             </AnimatePresence>
 
             <div className="text-lg text-[#1A2B3D] font-medium mb-6">
-              A coach picks which 5 of 12 players will start, then sets their batting order. Explain why the batting order has far more possibilities. Show your reasoning.
+              You asked the model to summarize a document and classify its tone, but it skips the classification. Explain why asking it to think step-by-step might fix this. Show your reasoning.
             </div>
 
             <div className="border border-[#1A2B3D] rounded-md p-4 mb-4 min-h-[150px] relative bg-[#FDFCFB]">
               <div className="font-mono text-[#1A2B3D]">
                 {phase >= 1 ? (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                    Picking 5 of 12 is a combination — order doesn't matter.<br/>
-                    Setting their batting order is a permutation — each reshuffle is new.<br/>
-                    Every chosen group reorders many ways, so ordering gives far more.
+                    Without intermediate steps, the model tries to generate the final output immediately.<br/>
+                    Chain-of-thought forces it to allocate tokens to process each instruction.<br/>
+                    By reasoning out loud first, it is far less likely to skip the classification step.
                   </motion.div>
                 ) : (
                   <span className="text-[#718096] opacity-50">Type your answer here...</span>
@@ -71,7 +71,7 @@ export function Scene6() {
 
             <div className="flex justify-between items-center">
               <div className="flex gap-2">
-                {['+', '−', '×', '÷', '=', 'Σ', '∞'].map((sym, i) => (
+                {['{ }', '[ ]', '< >', '</>', '...', '|', '=>'].map((sym, i) => (
                   <button key={i} className="w-8 h-8 rounded bg-[#EFECE6] hover:bg-[#E2E8F0] text-[#1A2B3D] font-mono text-sm flex items-center justify-center">
                     {sym}
                   </button>

@@ -64,11 +64,18 @@ router.get("/diagnostics/system", async (_req, res) => {
       const l = await db.select().from(lecturesTable);
       const a = await db.select().from(assignmentsTable);
       const p = await db.select().from(problemsTable);
-      if (t.length < 8) throw new Error(`only ${t.length} topics`);
+      // The curriculum is 4 weeks × 7 topics = 28 topics. Ungraded diagnostic
+      // primers (slug "reasoning-primer-*") are seeded separately and don't
+      // count toward the curriculum, so exclude them from the topic tally.
+      const curriculumTopics = t.filter(
+        (x) => !x.slug.startsWith("reasoning-primer-"),
+      );
+      if (curriculumTopics.length < 28)
+        throw new Error(`only ${curriculumTopics.length} topics`);
       if (l.length < 1) throw new Error("no lectures");
       if (a.length < 1) throw new Error("no assignments");
       if (p.length < 1) throw new Error("no problems");
-      return `${t.length} topics · ${l.length} lectures · ${a.length} assignments · ${p.length} problems`;
+      return `${curriculumTopics.length} topics · ${l.length} lectures · ${a.length} assignments · ${p.length} problems`;
     }),
   );
 
@@ -331,7 +338,7 @@ router.post("/diagnostics/synthetic-run", async (_req, res) => {
           correctAnswer: string;
           explanation: string;
         }>(
-          `You generate a single introductory finite-math practice problem on "${topic.title}" at easy difficulty. The question must present a concrete everyday scenario and ask the student to apply the topic's idea to it, with a model answer that reasons about the scenario in 2-4 sentences (never a single word, term, or bare yes/no). Respond as strict JSON: {"prompt": string, "correctAnswer": string, "explanation": string}.`,
+          `You generate a single prompt-engineering practice problem on "${topic.title}" at easy difficulty. The question must present a concrete prompting scenario (a specific task, prompt, or model failure) and ask the student to apply the topic's technique to it, with a model answer that reasons about the scenario in 2-4 sentences (never a single word, term, or bare yes/no). Respond as strict JSON: {"prompt": string, "correctAnswer": string, "explanation": string}.`,
           `New problem on ${topic.title}.`,
         );
         const [stored] = await db
@@ -432,7 +439,7 @@ router.post("/diagnostics/quality-control", async (_req, res) => {
   const steps: Step[] = [];
   res.setTimeout(10 * 60 * 1000);
 
-  // Build a sample of problems spread across every assignment/unit.
+  // Build a sample of problems spread across every assignment/week.
   let sample: {
     id: number;
     prompt: string;
@@ -444,12 +451,12 @@ router.post("/diagnostics/quality-control", async (_req, res) => {
   }[] = [];
 
   // For cumulative assessments (test/midterm/final), the answer key legitimately
-  // draws on examples from across the whole unit, not just the single topic the
+  // draws on examples from across the whole week, not just the single topic the
   // problem is tagged to. Grounding such a key in only its own topic's lecture
   // false-flags correct keys that cite content taught in a sibling topic. We
-  // therefore build a per-unit combined lecture text and use it for cumulative
+  // therefore build a per-week combined lecture text and use it for cumulative
   // problems, while keeping homework scoped to its own topic's lecture.
-  const unitLectures = new Map<number, string>();
+  const weekLectures = new Map<number, string>();
   const CUMULATIVE_KINDS = new Set(["test", "midterm", "final"]);
 
   steps.push(
@@ -473,26 +480,26 @@ router.post("/diagnostics/quality-control", async (_req, res) => {
         .orderBy(asc(assignmentsTable.weekNumber), asc(problemsTable.position));
       if (rows.length === 0) throw new Error("no problems to review");
 
-      // Sample up to MAX_REVIEW problems with guaranteed per-unit coverage:
-      // group by unit, give each unit an equal quota, then evenly stride within
-      // the unit. This keeps the check fast but never skips a unit even if the
-      // problem distribution across units is uneven.
+      // Sample up to MAX_REVIEW problems with guaranteed per-week coverage:
+      // group by week, give each week an equal quota, then evenly stride within
+      // the week. This keeps the check fast but never skips a week even if the
+      // problem distribution across weeks is uneven.
       const MAX_REVIEW = 12;
       if (rows.length <= MAX_REVIEW) {
         sample = rows;
       } else {
-        const byUnit = new Map<number, typeof rows>();
+        const byWeek = new Map<number, typeof rows>();
         for (const r of rows) {
-          const list = byUnit.get(r.weekNumber) ?? [];
+          const list = byWeek.get(r.weekNumber) ?? [];
           list.push(r);
-          byUnit.set(r.weekNumber, list);
+          byWeek.set(r.weekNumber, list);
         }
-        const units = [...byUnit.keys()].sort((a, b) => a - b);
-        const base = Math.floor(MAX_REVIEW / units.length);
-        let remainder = MAX_REVIEW % units.length;
+        const weeks = [...byWeek.keys()].sort((a, b) => a - b);
+        const base = Math.floor(MAX_REVIEW / weeks.length);
+        let remainder = MAX_REVIEW % weeks.length;
         const picked: typeof rows = [];
-        for (const u of units) {
-          const list = byUnit.get(u)!;
+        for (const u of weeks) {
+          const list = byWeek.get(u)!;
           const quota = Math.min(list.length, base + (remainder > 0 ? 1 : 0));
           if (remainder > 0) remainder -= 1;
           const stride = list.length / quota;
@@ -503,10 +510,10 @@ router.post("/diagnostics/quality-control", async (_req, res) => {
         sample = picked;
       }
 
-      // Build the per-unit combined lecture text used to ground cumulative
+      // Build the per-week combined lecture text used to ground cumulative
       // assessment keys. Each topic's lecture is truncated and concatenated
       // (with its title) so a Final/test key can be judged against everything
-      // the unit actually taught, not just one topic.
+      // the week actually taught, not just one topic.
       const allLectures = await db
         .select({
           weekNumber: lecturesTable.weekNumber,
@@ -517,17 +524,17 @@ router.post("/diagnostics/quality-control", async (_req, res) => {
         .innerJoin(topicsTable, eq(topicsTable.id, lecturesTable.topicId))
         .orderBy(asc(lecturesTable.weekNumber), asc(topicsTable.position));
       const PER_LECTURE_CAP = 2200;
-      const byUnitText = new Map<number, string[]>();
+      const byWeekText = new Map<number, string[]>();
       for (const l of allLectures) {
-        const list = byUnitText.get(l.weekNumber) ?? [];
+        const list = byWeekText.get(l.weekNumber) ?? [];
         list.push(`### ${l.title}\n${l.body.slice(0, PER_LECTURE_CAP)}`);
-        byUnitText.set(l.weekNumber, list);
+        byWeekText.set(l.weekNumber, list);
       }
-      // Cap the combined per-unit text so token cost stays bounded if the
-      // curriculum grows to many topics per unit.
-      const UNIT_TEXT_CAP = 12000;
-      for (const [week, parts] of byUnitText) {
-        unitLectures.set(week, parts.join("\n\n").slice(0, UNIT_TEXT_CAP));
+      // Cap the combined per-week text so token cost stays bounded if the
+      // curriculum grows to many topics per week.
+      const WEEK_TEXT_CAP = 12000;
+      for (const [week, parts] of byWeekText) {
+        weekLectures.set(week, parts.join("\n\n").slice(0, WEEK_TEXT_CAP));
       }
 
       return `reviewing ${sample.length} of ${rows.length} problems`;
@@ -540,32 +547,32 @@ router.post("/diagnostics/quality-control", async (_req, res) => {
     steps.push(
       // eslint-disable-next-line no-loop-func
       await run(
-        `${p.assignmentTitle} (unit ${p.weekNumber}, ${p.kind}): "${p.prompt.slice(0, 80)}${
+        `${p.assignmentTitle} (week ${p.weekNumber}, ${p.kind}): "${p.prompt.slice(0, 80)}${
           p.prompt.length > 80 ? "…" : ""
         }"`,
         async () => {
           // The course is grounded in a specific source text, whose framework and
           // terminology can differ from mainstream treatments. The check judges
-          // keys against what the course actually teaches — not generic textbook
-          // finite math. Homework is scoped to its own topic's lecture, but
+          // keys against what the course actually teaches — not generic
+          // prompt-engineering advice. Homework is scoped to its own topic's lecture, but
           // cumulative assessments (test/midterm/final) draw on examples from
-          // across the whole unit, so they are grounded in every lecture in the
-          // unit; otherwise a correct key citing a sibling topic's example
+          // across the whole week, so they are grounded in every lecture in the
+          // week; otherwise a correct key citing a sibling topic's example
           // (e.g. one lecture's case study reused on the final) is false-flagged
           // as "not in this lecture".
           const isCumulative = CUMULATIVE_KINDS.has(p.kind);
           const lecture = isCumulative
-            ? (unitLectures.get(p.weekNumber) ?? p.lectureBody.slice(0, 3500))
+            ? (weekLectures.get(p.weekNumber) ?? p.lectureBody.slice(0, 3500))
             : p.lectureBody.slice(0, 3500);
           const sourceLabel = isCumulative
-            ? "the course lectures for this unit"
+            ? "the course lectures for this week"
             : "the course lecture";
 
           // Phase 1 — independently re-derive the answer from the prompt + the
           // course's own lecture material, blind to the seeded key, so the
           // verdict can't just rubber-stamp the key.
           const derived = await chatText(
-            "You are a strong introductory finite-math student answering a short-answer problem. " +
+            "You are a strong prompt-engineering student answering a short-answer problem. " +
               `Base your answer on ${sourceLabel} provided, using its framework and terminology rather than outside theories. ` +
               "Answer the prompt directly and concisely (one or two sentences, or just the requested word). " +
               "Do not restate the prompt or add commentary.\n\n=== COURSE LECTURE MATERIAL ===\n" +
@@ -581,7 +588,7 @@ router.post("/diagnostics/quality-control", async (_req, res) => {
             confidence: number;
             rationale: string;
           }>(
-            "You are an academic quality-control reviewer for an introductory finite-math course. " +
+            "You are an academic quality-control reviewer for a prompt-engineering course. " +
               `You are given ${sourceLabel} the problem is drawn from, a problem prompt, the SHORT answer key the course grades students against, and an independently derived answer produced without seeing the key. ` +
               "Judge the key ONLY against what the provided course material teaches — its definitions, framework, terminology, and examples — not against outside or mainstream treatments that the course does not use. " +
               "When the provided material contains multiple lectures, an example or term taught in ANY of them counts as taught by the course; do not flag a key merely because the example appears in a different lecture than the one most associated with the prompt. " +
@@ -688,7 +695,7 @@ router.post("/diagnostics/expand-lectures", async (req, res) => {
       : "Noticeably more explanation: clarify each definition, motivate each rule, and add a short 'why this works' note where useful.";
 
   const sys =
-    `You are an introductory finite-math lecturer producing the ${level.toUpperCase()} version of a lecture. ` +
+    `You are a prompt-engineering lecturer producing the ${level.toUpperCase()} version of a lecture. ` +
     "You are given the SHORT version of the lecture. Rewrite it as a longer teaching version. RULES, no exceptions:\n" +
     "1. KEEP every heading and every concept from the SHORT version, in the same order, with the same names. You may add new sub-sections only when needed to introduce additional examples — but no new top-level topics.\n" +
     `2. ${moreExplanation}\n` +

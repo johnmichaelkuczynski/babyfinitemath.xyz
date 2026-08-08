@@ -32,7 +32,7 @@ export function Scene7() {
               className="text-center mb-12"
             >
               <div className="text-sm font-mono text-white/50 mb-2 uppercase tracking-widest">Assessment Graded</div>
-              <h2 className="text-4xl font-display font-bold text-white">Unit 1: Useful math without the infinite</h2>
+              <h2 className="text-4xl font-display font-bold text-white">Week 1: Foundations (How models respond)</h2>
             </motion.div>
 
             <div className="flex gap-8 items-center">
@@ -65,7 +65,7 @@ export function Scene7() {
                     <span className="font-bold text-sm uppercase tracking-wider text-white/70">Grader Rationale</span>
                   </div>
                   <p className="text-white/80 leading-relaxed text-lg">
-                    Excellent grasp of the core concepts. You clearly explained why choosing a team is a combination while ordering it is a permutation. Minor deduction on question 4 regarding conditional probability and why a positive test can still be uncertain.
+                    Excellent grasp of the core concepts. You clearly demonstrated how different prompt structures affect model behavior and token distributions. Minor deduction on question 4 regarding the distinction between zero-shot capability and hallucination boundaries.
                   </p>
                 </motion.div>
 
@@ -80,7 +80,7 @@ export function Scene7() {
                   </div>
                   <div>
                     <div className="font-bold text-[#10B981]">Human-written response • High Confidence</div>
-                    <div className="text-sm text-white/50 font-mono mt-1">Verified via text classifier & keystroke pattern analysis</div>
+                    <div className="text-sm text-white/50 font-mono mt-1">Verified via GPTZero text classifier & keystroke analysis</div>
                   </div>
                 </motion.div>
               </div>

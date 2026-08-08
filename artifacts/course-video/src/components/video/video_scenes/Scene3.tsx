@@ -3,15 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AppShell } from '../AppShell';
 
 export function Scene3() {
-  const topics = [
-    "1.1 What finite math is: useful math without the infinite",
-    "1.2 Sets and logic: organizing the world into categories",
-    "1.3 The art of counting: permutations and combinations",
-    "1.4 Probability: measuring what's likely",
-    "1.5 Matrices: organizing and solving with grids of numbers",
-    "1.6 Linear programming: getting the most out of limited resources",
-    "1.7 The math of money: interest, loans, and growth",
-    "1.8 Putting finite math to work (Capstone)"
+  const weeks = [
+    { title: "Week 1: Foundations", desc: "How models respond to prompts" },
+    { title: "Week 2: Core techniques", desc: "Examples, chain-of-thought, decomposition" },
+    { title: "Week 3: Advanced patterns", desc: "Structured output, chaining, RAG, tool use" },
+    { title: "Week 4: Applications & safety", desc: "Real tasks, prompt injection, AI features" }
   ];
 
   return (
@@ -29,43 +25,44 @@ export function Scene3() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <div className="text-sm font-medium text-[#718096] mb-1">UNIT 1</div>
-            <h2 className="text-3xl font-display font-bold text-[#1A2B3D]">Useful math without the infinite</h2>
-            <p className="text-[#4A5568] mt-2">8 topics • Estimated time: 4 hours</p>
+            <div className="text-sm font-medium text-[#718096] mb-1">COURSE CURRICULUM</div>
+            <h2 className="text-3xl font-display font-bold text-[#1A2B3D]">Prompt Engineering</h2>
+            <p className="text-[#4A5568] mt-2">4 Weeks • 28 Topics • Estimated time: 24 hours</p>
           </motion.div>
 
           <div className="flex-1 bg-white rounded-lg border border-[#E2E8F0] shadow-sm overflow-hidden flex flex-col relative">
             <div className="absolute inset-0 overflow-y-auto p-2">
-              {topics.map((topic, i) => (
+              {weeks.map((week, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 + i * 0.1 }}
-                  className="flex items-center p-4 hover:bg-slate-50 border-b border-[#E2E8F0] last:border-0 group cursor-default"
+                  className="flex items-center p-6 hover:bg-slate-50 border-b border-[#E2E8F0] last:border-0 group cursor-default"
                 >
-                  <div className="w-8 h-8 rounded-full bg-[#EFECE6] text-[#1A2B3D] flex items-center justify-center font-mono text-xs font-bold mr-4 shrink-0">
-                    {i+1}
+                  <div className="w-12 h-12 rounded-full bg-[#EFECE6] text-[#1A2B3D] flex items-center justify-center font-mono text-lg font-bold mr-6 shrink-0">
+                    W{i+1}
                   </div>
-                  <div className="flex-1 font-medium text-[#1A2B3D]">{topic}</div>
-                  <div className="w-20 text-right">
+                  <div className="flex-1">
+                    <div className="font-display font-bold text-lg text-[#1A2B3D]">{week.title}</div>
+                    <div className="text-[#4A5568] mt-1">{week.desc}</div>
+                  </div>
+                  <div className="w-24 text-right">
                     {i === 0 ? (
-                      <span className="text-xs font-bold text-[#10B981] bg-[#10B981]/10 px-2 py-1 rounded">DONE</span>
-                    ) : i === 1 ? (
-                      <span className="text-xs font-bold text-[#E76E50] bg-[#E76E50]/10 px-2 py-1 rounded">START</span>
+                      <span className="text-xs font-bold text-[#E76E50] bg-[#E76E50]/10 px-3 py-1.5 rounded">IN PROGRESS</span>
                     ) : (
-                      <span className="text-xs text-[#718096]">0%</span>
+                      <span className="text-xs font-bold text-[#718096] bg-[#F1F5F9] px-3 py-1.5 rounded">LOCKED</span>
                     )}
                   </div>
                 </motion.div>
               ))}
             </div>
             
-            {/* Overlay cursor to show clicking the 2nd topic */}
+            {/* Overlay cursor to show clicking the 1st week */}
             <motion.div 
               className="absolute z-50 w-6 h-6"
               initial={{ x: '80vw', y: '80vh' }}
-              animate={{ x: '40vw', y: '25vh' }}
+              animate={{ x: '40vw', y: '15vh' }}
               transition={{ delay: 1.5, duration: 0.8, ease: "easeInOut" }}
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1A2B3D" strokeWidth="2" className="drop-shadow-md">

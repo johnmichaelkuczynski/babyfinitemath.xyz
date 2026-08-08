@@ -22,11 +22,11 @@ router.get("/tutor/suggestions/:lectureId", async (req, res): Promise<void> => {
   }
 
   const SYSTEM_PROMPT =
-    'You are a rigorous introductory finite-math tutor writing study questions. Reply as strict JSON of the form {"questions": string[]} with NO other keys.';
+    'You are a rigorous prompt-engineering tutor writing study questions. Reply as strict JSON of the form {"questions": string[]} with NO other keys.';
   const buildUserPrompt = (extra: string) =>
     extra +
-    `From the lecture below, write 6 starter questions that make the student APPLY the lecture's ideas to a CONCRETE EXAMPLE. Every question must hang on a specific case and ask the student to reason about that case.\n\n` +
-    `THE SINGLE MOST IMPORTANT RULE: every question must contain an explicit, concrete, EVERYDAY example — a specific relatable situation (e.g. "two clubs of 20 and 15 members where some belong to both, so adding the groups double-counts", "a coach choosing which 5 of 12 players start versus setting their batting order", "flipping a fair coin twice and asking the chance of at least one head", "two friends saving the same total but one starting ten years earlier in a compounding account", "a bakery maximizing profit under limited flour, oven time, and labor"). Keep examples plain-language and intuitive — no heavy formulas, study citations, or jargon. The question must ask the student to analyze, explain, judge, or predict something about THAT example. Reuse the lecture's own examples when it has them; otherwise invent a vivid, specific one.\n\n` +
+    `From the lecture below, write 6 starter questions that make the student APPLY the lecture's prompt-engineering ideas to a CONCRETE PROMPTING SCENARIO. Every question must hang on a specific scenario and ask the student to reason about how they would prompt in that case.\n\n` +
+    `THE SINGLE MOST IMPORTANT RULE: every question must contain an explicit, concrete prompting scenario — a specific situation where the student must apply the lecture's technique (e.g. "you want a model to extract every invoice date from a messy PDF dump and it keeps missing some — how would you restructure the prompt", "you ask a model to summarize a legal contract but it hallucinates clauses that aren't there", "you need a chatbot to always answer in a fixed JSON schema but it occasionally adds prose", "your few-shot examples are biasing the model toward one answer format", "a customer-support prompt works in English but degrades in Spanish"). The question must ask the student to analyze, redesign, judge, or predict the effect of a specific prompting choice for THAT scenario. Reuse the lecture's own examples when it has them; otherwise invent a vivid, specific one.\n\n` +
     `ABSOLUTELY FORBIDDEN — never produce any of these:\n` +
     `- Questions that ask for a definition ("What is X?", "What does X mean?", "Define X").\n` +
     `- Questions that ask to distinguish or compare concepts in the abstract ("How do X and Y differ?", "What is the difference between X and Y?", "How does X relate to Y?").\n` +
@@ -34,10 +34,10 @@ router.get("/tutor/suggestions/:lectureId", async (req, res): Promise<void> => {
     `- Any question that could be answered without referring to a specific case.\n\n` +
     `If a question does not name a concrete example and ask the student to reason about it, REWRITE it until it does.\n\n` +
     `GOOD vs BAD:\n` +
-    `- BAD: "What's the difference between a permutation and a combination?"\n` +
-    `- GOOD: "A coach picks which 5 of 12 players will start and then sets their batting order — explain why one of these is a combination and the other a permutation, and which has more possibilities."\n` +
-    `- BAD: "What is compound interest?"\n` +
-    `- GOOD: "Two friends save the same total, but one starts ten years earlier in an account that compounds — explain why the early starter can end up with far more money."\n\n` +
+    `- BAD: "What's the difference between zero-shot and few-shot prompting?"\n` +
+    `- GOOD: "A model keeps formatting its answers inconsistently when you ask for product summaries — would you add few-shot examples or a stricter instruction, and why would that fix the inconsistency here?"\n` +
+    `- BAD: "What is chain-of-thought prompting?"\n` +
+    `- GOOD: "A model gives the wrong total on a multi-step word problem in your app — explain how asking it to reason step by step before answering could change the result."\n\n` +
     `Cover several different major ideas from the reading across the 6 questions. One clear sentence each (roughly 12–28 words), in the student's own voice, no compound double-questions. For any math expressions use \\(...\\) for inline math and \\[...\\] for display math. For currency dollar amounts write the dollar sign as \\$ (e.g. \\$3, \\$200) — never use a bare $ for currency.\n\n` +
     `Return exactly 6 questions.\n\nLECTURE TITLE: ${lecture.title}\n\nLECTURE BODY:\n"""\n${lecture.body}\n"""`;
 
@@ -104,7 +104,7 @@ router.post("/tutor/ask", async (req, res): Promise<void> => {
   const { message, selectedLectureText } = parsed.data;
 
   const sys =
-    "You are an encouraging introductory finite-math tutor. Explain step by step, use clear examples and relatable cases, and define key terms (e.g. sets, union/intersection/complement, permutations and combinations, the multiplication principle, probability, independent events, conditional probability, expected value, matrices, systems of equations, linear programming, feasible region, simple and compound interest, annuities) when they come up. Keep replies short (3-6 sentences) unless the student asks for more detail. Never just give the answer — guide them. For any math expressions use \\(...\\) for inline math and \\[...\\] for display math. For currency amounts write the dollar sign as \\$ (e.g. \\$3, \\$200) — never use a bare $ for currency.";
+    "You are an encouraging prompt-engineering tutor. Ground your help in the section of the lecture the student is reading. Explain step by step, use clear prompting examples and relatable scenarios, and define key terms (e.g. zero-shot and few-shot prompting, system vs user messages, chain-of-thought and step-by-step reasoning, role and persona prompting, delimiters and structured output, output schemas and JSON mode, temperature and sampling, context windows, retrieval-augmented generation, prompt injection, guardrails, evaluation and iteration) when they come up. Keep replies short (3-6 sentences) unless the student asks for more detail. Never just give the answer — guide them. For any math expressions use \\(...\\) for inline math and \\[...\\] for display math. For currency amounts write the dollar sign as \\$ (e.g. \\$3, \\$200) — never use a bare $ for currency.";
   const user = selectedLectureText
     ? `Context from the lecture the student is reading:\n"""\n${selectedLectureText}\n"""\n\nStudent question: ${message}`
     : message;

@@ -21,7 +21,7 @@ export default function Assignments() {
       <div className="p-8 max-w-4xl mx-auto w-full flex flex-col gap-8">
         <div>
           <h1 className="text-3xl font-serif font-bold text-primary mb-2">Assignments</h1>
-          <p className="text-muted-foreground">Complete your homework, tests, midterm, and final exams.</p>
+          <p className="text-muted-foreground">Complete your weekly homework, a midterm, and a cumulative final.</p>
         </div>
 
         {isLoading ? (
@@ -34,7 +34,7 @@ export default function Assignments() {
           <div className="flex flex-col gap-10">
             {Object.entries(grouped || {}).map(([week, items]) => (
               <div key={week} className="flex flex-col gap-4">
-                <h2 className="text-2xl font-serif font-semibold border-b pb-2">Unit {week}</h2>
+                <h2 className="text-2xl font-serif font-semibold border-b pb-2">Week {week}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {items.map((item) => (
                     <Card key={item.id} className="flex flex-col justify-between">

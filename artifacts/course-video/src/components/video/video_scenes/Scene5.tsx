@@ -4,8 +4,8 @@ import { AppShell } from '../AppShell';
 
 export function Scene5() {
   const [phase, setPhase] = useState(0);
-  const question = "If 20 people hike and 15 kayak, why isn't the total who signed up just 35?";
-  const answer = "Because some people did both. Adding the two groups counts those overlap members twice, so you subtract the overlap once: with 6 in both, it's 20 + 15 − 6 = 29 different people.";
+  const question = "If I told the model to return JSON, why did it still include text like 'Here is your JSON'?";
+  const answer = "Because language models naturally default to conversational responses. Instructing it to use JSON helps, but you often need to explicitly forbid conversational filler or use a structured output tool to force the format.";
   const [typedQ, setTypedQ] = useState("");
   const [typedA, setTypedA] = useState("");
 

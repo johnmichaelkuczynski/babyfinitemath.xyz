@@ -13,7 +13,7 @@ const PHASE_SHORT: Record<string, string> = {
 };
 
 const INSTRUMENT_SHORT: Record<string, string> = {
-  subject: "Finite Math",
+  subject: "Prompt Engineering",
   general: "General Reasoning",
 };
 
@@ -92,7 +92,7 @@ export default function Grades() {
                       <div className="flex flex-col">
                         <span className="font-medium">{a.title}</span>
                         <span className="text-xs uppercase tracking-wider text-muted-foreground">
-                          {a.kind} · Unit {a.weekNumber}
+                          {a.kind} · Week {a.weekNumber}
                         </span>
                       </div>
                       <div className="flex items-center gap-3">

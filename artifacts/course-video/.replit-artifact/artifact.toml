@@ -1,6 +1,6 @@
 kind = "video"
 previewPath = "/course-video/"
-title = "Basic Finite Math — Walkthrough"
+title = "Prompt Engineering — Walkthrough"
 version = "1.0.0"
 id = "artifacts/course-video"
 router = "path"

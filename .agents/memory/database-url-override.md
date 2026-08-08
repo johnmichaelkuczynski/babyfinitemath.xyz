@@ -23,3 +23,5 @@ Once the user removes the platform DB in the Database pane, the secret takes eff
 On a brand-new/empty app DB, the boot-time `seedIfEmpty` fails with `relation "topics" does not exist` — the seed code does NOT create tables, it assumes the schema already exists. Run `pnpm --filter @workspace/db run push` (drizzle-kit push) once to materialize the schema, then restart so the seed populates it.
 **Why:** seed self-heal only handles row content (marker slug + content version), never DDL; a missing-table error at boot is a schema-push gap, not a seed-content bug.
 **How to apply:** if api-server logs show `relation "<table>" does not exist` right after "Server listening", push the schema before debugging seed logic.
+
+Dev DB schema drift: `drizzle-kit push` fails in non-interactive shells ("Interactive prompts require a TTY"). When seed fails with "column ... does not exist", diff information_schema.columns against lib/db schema and apply targeted `ALTER TABLE ... ADD COLUMN IF NOT EXISTS` via executeSql instead.

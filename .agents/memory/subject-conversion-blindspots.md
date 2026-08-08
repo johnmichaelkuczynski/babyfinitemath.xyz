@@ -24,3 +24,9 @@ Two more easily-missed spots:
 - **`.agents/agent_assets_metadata.toml` carries asset display titles.** Lines like `title = "README — <Brand>"` and `title = "YouTube Description — <Brand>"` keep the old brand after a rename. It's a hidden dot-dir file (needs `rg --hidden`); editing it directly is fine, or re-present the assets which regenerates it.
 
 - **Root-level exported video files bake the brand into the FILENAME.** Past exports land at repo root as e.g. `BABY-FINITE-MATH-<timestamp>.mp4`. A name/brand change leaves the old word in the filename even when all file *contents* are clean. After a rename sweep with banned words, also `find . -iname '*<bannedword>*'` and rename stale exports (rename, don't delete — they're user assets).
+
+Additional blind spots found in the 2026-08 Prompt Engineering conversion:
+- `routes/course.ts` hardcodes both a `WEEK_TITLES` map AND the overview week list (`[1].map(buildWeek)`) plus a `weekNumber > N` validation bound — all three must match the new week count or the API silently serves a truncated course.
+- `auth.ts` embeds the old custom production domain as an OAuth callback fallback and in the trusted-hosts allowlist — stale domains break sign-in on deploy.
+- `public/opengraph.jpg` is a screenshot of the OLD landing page; regenerate by temporarily adding a `/landing-preview` route (auth redirects hide the landing) and screenshotting at 1200×630 with saveTo.
+- Video walkthrough scenes: middle scenes (4–6, the feature demos with embedded lecture/practice copy) are the easiest to miss; grep every Scene*.tsx for old-subject nouns.

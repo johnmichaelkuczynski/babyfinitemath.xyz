@@ -4,10 +4,10 @@ import { AppShell } from '../AppShell';
 
 export function Scene8() {
   const topicsList = [
-    { name: 'What Finite Math Is', acc: '98%', status: 'Strong', color: 'text-[#10B981]', bg: 'bg-[#10B981]/10' },
-    { name: 'The Art of Counting', acc: '92%', status: 'Strong', color: 'text-[#10B981]', bg: 'bg-[#10B981]/10' },
-    { name: 'Probability', acc: '75%', status: 'Developing', color: 'text-[#FBBF24]', bg: 'bg-[#FBBF24]/10' },
-    { name: 'Linear Programming', acc: '45%', status: 'Weak', color: 'text-[#EF4444]', bg: 'bg-[#EF4444]/10' },
+    { name: 'System Prompts', acc: '98%', status: 'Strong', color: 'text-[#10B981]', bg: 'bg-[#10B981]/10' },
+    { name: 'Few-Shot Examples', acc: '92%', status: 'Strong', color: 'text-[#10B981]', bg: 'bg-[#10B981]/10' },
+    { name: 'Chain-of-Thought', acc: '75%', status: 'Developing', color: 'text-[#FBBF24]', bg: 'bg-[#FBBF24]/10' },
+    { name: 'Tool Use & RAG', acc: '45%', status: 'Weak', color: 'text-[#EF4444]', bg: 'bg-[#EF4444]/10' },
   ];
 
   return (

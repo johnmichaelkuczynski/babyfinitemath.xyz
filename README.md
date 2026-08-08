@@ -1,20 +1,20 @@
-# 🔎 Basic Finite Math
+# 🔎 Prompt Engineering
 
-**A complete, one-unit introduction to finite math that teaches, tutors, drills, and grades itself — for adults beginning the discipline.**
+**A complete, four-week introduction to prompt engineering that teaches, tutors, drills, grades, and proofs itself — for adults beginning the discipline.**
 
-Basic Finite Math is a self-paced, single-user web course that delivers a thorough, plain-language introduction to finite math — the practical math of counting, chance, and decisions you can actually finish — taught, tutored, drilled, and graded entirely by AI, with built-in academic-integrity enforcement. It assumes no prior background in the subject and develops every idea from first principles in plain words rather than dense formalism: how to organize the world into sets, count possibilities without listing them all, measure how likely something is, and make the most of limited resources — from club overlaps and card decks to interest, loans, and growth.
+Prompt Engineering is a self-paced, single-user web course that delivers a thorough, plain-language introduction to prompt engineering — the craft of designing instructions that make language models produce accurate, consistent, useful output — taught, tutored, drilled, and graded entirely by AI, with built-in academic-integrity enforcement. It assumes no prior background in the subject and develops every idea from first principles in plain words rather than dense formalism: how models read and continue text, how to be specific about what you want, how to steer role, tone, format, and length, and how to build reliable, testable prompts — from single instructions and worked examples to structured output, tool use, and full prompt-to-product systems.
 
 ---
 
 ## ✨ Features
 
-- **One unit, 8 topics** — a complete plain-language syllabus: what finite math is · sets and logic · the art of counting · probability · matrices · linear programming · the math of money · putting finite math to work (the capstone).
+- **Four weeks, 28 lectures** — a complete plain-language syllabus across four weeks of seven topics each: **Foundations** (what prompt engineering is · how models read and continue text · anatomy of a prompt · being specific · role and tone · format and length · failure modes), **Core techniques** (zero-shot vs few-shot · writing good examples · chain-of-thought · decomposition · context and reference · delimiters and structure · iterating and debugging), **Advanced patterns and reliability** (structured output and JSON · prompt chaining · self-critique · retrieval-augmented generation · tool use and function calling · temperature and sampling · evaluation and testing), and **Applications, safety, and systems** (writing, summarizing, and extraction · coding and data · analysis and decision support · prompt injection · hallucination and bias · templates · from prompt to product).
 - **Three-depth lessons** — every lesson reads at **Short / Medium / Long** length, AI-rewritten while keeping the same examples and learning objectives.
 - **Section-scoped AI tutor** — ask about the exact paragraph you're reading; answers stream back token-by-token, grounded in that lecture section.
-- **Adaptive practice** — generated problem sets that get harder on a streak and ease off after a miss; per-session difficulty persists. Questions ask you to explain your reasoning in plain words, never to crunch heavy calculations.
-- **AI-graded assignments** — two homework sets, a timed unit test, and a cumulative final, each scored for semantic equivalence with a written rationale and a rolled-up percent score.
+- **Adaptive practice** — generated problem sets that get harder on a streak and ease off after a miss; per-session difficulty persists. Questions ask you to explain your reasoning in plain words, never to memorize trivia.
+- **AI-graded assignments** — four weekly homework sets, a timed 30-minute midterm after week 2, and a timed 45-minute cumulative final, each scored for semantic equivalence with a written rationale and a rolled-up percent score.
 - **Two-layer AI-authorship detection** — every submission is screened by a static text classifier (GPTZero) **and** a diachronic keystroke-pattern detector, each with a human-readable verdict.
-- **Diagnostic reasoning checks** — two ungraded instruments (Finite Math subject reasoning and General Reasoning), each offered in three formats and three lengths, at four points in the journey (before, one-third, two-thirds, and after the course). They are unlimited practice with fresh questions every attempt and never affect the grade (coursework is 100%).
+- **Diagnostic reasoning checks** — two ungraded instruments (Prompt Engineering subject reasoning and General Reasoning), each offered in three formats and three lengths, at four points in the journey (before, one-third, two-thirds, and after the course). They are unlimited practice with fresh questions every attempt and never affect the grade (coursework is 100%).
 - **Live analytics** — dashboard KPIs (attempts, accuracy, streak), per-topic mastery, and a recent-activity feed.
 - **Operator diagnostics** — one-click self-tests that verify the entire stack (database, OpenAI, GPTZero, detection, and the practice/grade loop) before you trust a session.
 
@@ -90,11 +90,11 @@ Open the **Diagnostics** page in the app (or hit the API directly) to run:
 
 ## 📚 Who it's for
 
-- **Newcomers to the discipline** — a complete, plain-language introduction to finite math with on-demand tutoring and adaptive practice, assuming no prior background.
+- **Newcomers to the discipline** — a complete, plain-language introduction to prompt engineering with on-demand tutoring and adaptive practice, assuming no prior background.
 - **Instructors & curriculum designers** — a working reference for AI-taught, AI-graded, AI-detection-screened coursework.
 - **Academic-integrity researchers** — a live testbed for layered AI-authorship detection (text classification + keystroke behavior).
 - **Product & engineering teams** — a reference implementation of contract-first full-stack architecture, streaming AI UX, and self-diagnostic tooling.
 
 ---
 
-*Basic Finite Math — where the curriculum, the tutor, the grader, and the integrity check all live in one room.*
+*Prompt Engineering — where the curriculum, the tutor, the grader, and the integrity check all live in one room.*
