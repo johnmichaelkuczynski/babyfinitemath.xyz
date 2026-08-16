@@ -34,6 +34,7 @@ import {
   type ScoreSummary,
   type DiagFormat,
 } from "../lib/reasoning";
+import { checkMeter, recordAiOutput } from "../lib/metering";
 
 const router: IRouter = Router();
 
@@ -279,6 +280,12 @@ router.post("/reasoning/assessments/:assessmentId/start", async (req, res): Prom
     return;
   }
 
+  // Every occurrence of the assessment presents freshly generated questions of
+  // the same kind (different scenarios/items) — including the very first take
+  // and any take after a course reset. The seeded template is only the
+  // structural blueprint, and the fallback if generation fails.
+  if (!checkMeter(req, res)) return;
+
   const [created] = await db
     .insert(diagnosticAttemptsTable)
     .values({ assessmentId: id, status: "in_progress" })
@@ -288,16 +295,13 @@ router.post("/reasoning/assessments/:assessmentId/start", async (req, res): Prom
     return;
   }
 
-  // Every occurrence of the assessment presents freshly generated questions of
-  // the same kind (different scenarios/items) — including the very first take
-  // and any take after a course reset. The seeded template is only the
-  // structural blueprint, and the fallback if generation fails.
   const length = (parsedBody.data.length ?? "medium") as TestLength;
   const instrument = a.instrument as Instrument;
   const phase = a.phase as Phase;
   const count = itemCountFor(instrument, length);
   const template = await loadTemplateItems(id);
   const variant = await generateVariantItems(instrument, phase, template, count);
+  recordAiOutput(req, ...variant.map((v) => v.prompt));
   await insertAttemptItems(id, created.id, variant);
   const items = await loadItemsForAttempt(id, created.id);
 
@@ -326,6 +330,7 @@ router.post("/reasoning/assessments/:assessmentId/submit", async (req, res): Pro
     res.status(400).json({ error: parsed.error.message });
     return;
   }
+  if (!checkMeter(req, res)) return;
   const [a] = await db
     .select()
     .from(diagnosticAssessmentsTable)
@@ -370,6 +375,7 @@ router.post("/reasoning/assessments/:assessmentId/submit", async (req, res): Pro
     responses,
   );
   const feedback = await generateFeedback(instrument, a.title, summary);
+  recordAiOutput(req, feedback);
 
   // Pass/Fail policy: submitting the assessment is a pass.
   const passed = true;

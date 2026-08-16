@@ -17,6 +17,7 @@ import {
 } from "@workspace/api-zod";
 import { chatJson } from "../lib/ai";
 import { gradeAnswer } from "../lib/grading";
+import { checkMeter, recordAiOutput } from "../lib/metering";
 
 const router: IRouter = Router();
 
@@ -108,6 +109,7 @@ router.post("/practice/sessions/:sessionId/next", async (req, res): Promise<void
     res.status(400).json({ error: parsed.error.message });
     return;
   }
+  if (!checkMeter(req, res)) return;
   const [session] = await db
     .select()
     .from(practiceSessionsTable)
@@ -172,6 +174,7 @@ router.post("/practice/sessions/:sessionId/next", async (req, res): Promise<void
     };
   }
 
+  recordAiOutput(req, generated.prompt, generated.correctAnswer, generated.explanation);
   const [stored] = await db
     .insert(practiceProblemsTable)
     .values({
@@ -206,6 +209,7 @@ router.post("/practice/sessions/:sessionId/grade", async (req, res): Promise<voi
     res.status(400).json({ error: parsed.error.message });
     return;
   }
+  if (!checkMeter(req, res)) return;
   const { problemId, answer, trace } = parsed.data;
   const [session] = await db
     .select()
@@ -270,6 +274,7 @@ router.post("/practice/sessions/:sessionId/grade", async (req, res): Promise<voi
     }
   }
 
+  recordAiOutput(req, graded.explanation, tutorTip);
   res.json(
     GradePracticeAnswerResponse.parse({
       problemId,

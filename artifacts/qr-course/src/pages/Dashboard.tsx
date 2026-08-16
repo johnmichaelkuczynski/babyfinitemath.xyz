@@ -6,6 +6,8 @@ import { Link } from "wouter";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { ReasoningCallout } from "@/components/ReasoningCallout";
+import { TopicsRail } from "@/components/TopicsRail";
+import { VisitorStat } from "@/components/VisitorStat";
 
 export default function Dashboard() {
   const { data: overview, isLoading: isLoadingOverview } = useGetCourseOverview();
@@ -13,13 +15,18 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <div className="p-8 max-w-6xl mx-auto w-full flex flex-col gap-8">
+      <div className="p-8 max-w-6xl mx-auto w-full flex flex-col lg:flex-row gap-8">
+        <TopicsRail className="hidden lg:block w-56 shrink-0" />
+
+        <div className="flex-1 min-w-0 flex flex-col gap-8">
         <div>
           <h1 className="text-3xl font-serif font-bold text-primary mb-2">
             {overview ? overview.title : <Skeleton className="h-9 w-64" />}
           </h1>
           <p className="text-muted-foreground">Welcome to your Prompt Engineering course workspace.</p>
         </div>
+
+        <VisitorStat />
 
         <ReasoningCallout phase="before" />
 
@@ -103,6 +110,7 @@ export default function Dashboard() {
               </CardContent>
             </Card>
           </div>
+        </div>
         </div>
       </div>
     </Layout>

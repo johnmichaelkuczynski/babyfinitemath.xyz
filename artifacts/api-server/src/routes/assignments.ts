@@ -18,6 +18,7 @@ import {
 } from "@workspace/api-zod";
 import { gradeAnswer } from "../lib/grading";
 import { detect } from "../lib/detection";
+import { checkMeter, recordAiOutput } from "../lib/metering";
 
 const router: IRouter = Router();
 
@@ -249,6 +250,7 @@ router.post("/assignments/attempts/:attemptId/submit", async (req, res): Promise
     res.status(400).json({ error: "invalid id" });
     return;
   }
+  if (!checkMeter(req, res)) return;
   const skipDetection =
     (req.body as { skipDetection?: boolean } | undefined)?.skipDetection === true;
   const [attempt] = await db
@@ -282,6 +284,7 @@ router.post("/assignments/attempts/:attemptId/submit", async (req, res): Promise
       userAnswer,
     });
     if (graded.correct) score += 1;
+    recordAiOutput(req, graded.explanation);
     perProblem.push({
       problemId: p.id,
       correct: graded.correct,

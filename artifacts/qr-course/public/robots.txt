@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://prompt-engineering-for-a.replit.app/sitemap.xml

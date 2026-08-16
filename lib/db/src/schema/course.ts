@@ -26,6 +26,7 @@ export const visitsTable = pgTable("visits", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => usersTable.id, { onDelete: "set null" }),
   email: text("email"),
+  sessionId: text("session_id"),
   visitedAt: timestamp("visited_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

@@ -14,6 +14,7 @@ import {
   GenerateReportResponse,
 } from "@workspace/api-zod";
 import { chatJson } from "../lib/ai";
+import { checkMeter, recordAiOutput } from "../lib/metering";
 
 const router: IRouter = Router();
 
@@ -159,7 +160,8 @@ router.get("/analytics/activity", async (_req, res) => {
   res.json(GetRecentActivityResponse.parse(items.slice(0, 30)));
 });
 
-router.post("/analytics/report", async (_req, res) => {
+router.post("/analytics/report", async (req, res) => {
+  if (!checkMeter(req, res)) return;
   const topics = await topicStats();
   const submitted = await db
     .select()
@@ -205,6 +207,7 @@ router.post("/analytics/report", async (_req, res) => {
         : ["Open a homework and start with a small set of problems."];
   }
 
+  recordAiOutput(req, narrative, ...recommendations);
   res.json(
     GenerateReportResponse.parse({
       generatedAt: new Date().toISOString(),

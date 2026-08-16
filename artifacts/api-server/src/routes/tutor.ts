@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { db, lecturesTable } from "@workspace/db";
 import { AskTutorBody, AskTutorResponse } from "@workspace/api-zod";
 import { chatText, chatJson, FAST_MODEL } from "../lib/ai";
+import { checkMeter, recordAiOutput } from "../lib/metering";
 
 const router: IRouter = Router();
 
@@ -12,6 +13,7 @@ router.get("/tutor/suggestions/:lectureId", async (req, res): Promise<void> => {
     res.status(400).json({ error: "invalid lectureId" });
     return;
   }
+  if (!checkMeter(req, res)) return;
   const [lecture] = await db
     .select()
     .from(lecturesTable)
@@ -87,8 +89,10 @@ router.get("/tutor/suggestions/:lectureId", async (req, res): Promise<void> => {
         }
       }
     }
+    const finalQuestions = good.slice(0, 6);
+    recordAiOutput(req, ...finalQuestions);
     res.setHeader("Cache-Control", "no-store");
-    res.json({ questions: good.slice(0, 6) });
+    res.json({ questions: finalQuestions });
   } catch {
     res.setHeader("Cache-Control", "no-store");
     res.json({ questions: [] });
@@ -101,6 +105,7 @@ router.post("/tutor/ask", async (req, res): Promise<void> => {
     res.status(400).json({ error: parsed.error.message });
     return;
   }
+  if (!checkMeter(req, res)) return;
   const { message, selectedLectureText } = parsed.data;
 
   const sys =
@@ -116,6 +121,7 @@ router.post("/tutor/ask", async (req, res): Promise<void> => {
     text =
       "I'm having trouble reaching the tutor service right now. Try again in a moment, and consider re-reading the relevant section of the lecture.";
   }
+  recordAiOutput(req, text);
   res.json(AskTutorResponse.parse({ text, audioUrl: null }));
 });
 

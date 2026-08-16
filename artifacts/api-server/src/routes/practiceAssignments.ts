@@ -16,6 +16,7 @@ import {
 } from "@workspace/api-zod";
 import { chatJson } from "../lib/ai";
 import { gradePracticeEssay } from "../lib/grading";
+import { checkMeter, recordAiOutput } from "../lib/metering";
 
 const router: IRouter = Router();
 
@@ -38,6 +39,7 @@ router.post(
       return;
     }
 
+    if (!checkMeter(req, res)) return;
     const [assignment] = await db
       .select()
       .from(assignmentsTable)
@@ -145,6 +147,10 @@ router.post(
       return;
     }
 
+    recordAiOutput(
+      req,
+      ...finalProblems.flatMap((p) => [p.prompt, p.correctAnswer, p.explanation]),
+    );
     const inserted = await db
       .insert(practiceProblemsTable)
       .values(
@@ -197,6 +203,7 @@ router.post(
       res.status(400).json({ error: parsed.error.message });
       return;
     }
+    if (!checkMeter(req, res)) return;
 
     const [session] = await db
       .select()
@@ -258,6 +265,7 @@ router.post(
     const score = results.filter((r) => r.correct).length;
     const percent = total > 0 ? Math.round((score / total) * 100) : 0;
 
+    recordAiOutput(req, ...results.map((r) => r.feedback));
     res.json(
       GradePracticeAssignmentResponse.parse({
         score,

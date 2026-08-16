@@ -16,6 +16,7 @@ import {
   GenerateLectureExamplesBody,
 } from "@workspace/api-zod";
 import { chatText } from "../lib/ai";
+import { checkMeter, recordAiOutput } from "../lib/metering";
 
 const router: IRouter = Router();
 
@@ -193,6 +194,7 @@ router.post(
       res.status(400).json({ error: parsed.error.message });
       return;
     }
+    if (!checkMeter(req, res)) return;
     const instruction = parsed.data.instruction.trim();
     const baseLevel = parsed.data.baseLevel ?? "short";
 
@@ -249,6 +251,7 @@ router.post(
       return;
     }
 
+    recordAiOutput(req, rewritten);
     const [updated] = await db
       .update(lecturesTable)
       .set({ bodyCustom: rewritten, customInstruction: instruction })
@@ -296,6 +299,7 @@ router.post(
       res.status(400).json({ error: parsed.error.message });
       return;
     }
+    if (!checkMeter(req, res)) return;
     const level = parsed.data.level;
 
     const [lecture] = await db
@@ -359,6 +363,7 @@ router.post(
       return;
     }
 
+    recordAiOutput(req, augmented);
     const [updated] = await db
       .update(lecturesTable)
       .set({ [examplesColumn]: augmented })

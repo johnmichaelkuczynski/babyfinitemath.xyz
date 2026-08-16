@@ -1,7 +1,8 @@
 - [Course answer-key QC diagnostic](course-qc-diagnostic.md) — LLM key-legitimacy checks must judge against the course's own lecture text (not generic knowledge), or correct course-specific keys false-flag.
 - [Google OAuth auth](google-oauth-auth.md) — auth is now passport + express-session + connect-pg-simple; SESSION_SECRET set as secret; frontend uses useAuth hook (fetch /api/auth/user); no Clerk anywhere.
 - [esbuild __dirname asset copy](esbuild-dirname-asset-copy.md) — packages that read files relative to __dirname (e.g. connect-pg-simple/table.sql) break in the esbuild bundle; copy the asset into dist/ in build.mjs after esbuild finishes.
-- [API auth model](api-auth-model.md) — single-user app: API has NO per-route server authz; auth gating is frontend-only. "Admin mode" + skipDetection are intentionally client-side flags, not a trust boundary.
+- [API auth model](api-auth-model.md) — OUTDATED for public routes; see open-access-metering.
+- [Open-access freemium model](open-access-metering.md) — anonymous metering (2000 AI chars → login_required), owner-only prod gating of diagnostics/admin/detection, one-visit-per-session rule, session_id boot self-heal.
 - [Tutor starter-question style](tutor-starter-questions.md) — lecture starter questions must ALWAYS be concrete-case application; never definition/abstract/comparison questions (user mandate).
 - [Course content reseed](course-content-reseed.md) — seeded data migrations must self-heal via a content marker + replace-in-transaction; "seed if empty" strands old content in existing/prod DBs (prod writes are read-only).
 - [DATABASE_URL override](database-url-override.md) — app DB resolves to platform `helium/heliumdb`, which overrides a user-set DATABASE_URL secret; checkDatabase() can report "not provisioned" while the app still has a working DB.

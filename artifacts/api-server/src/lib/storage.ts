@@ -1,4 +1,4 @@
-import { eq, desc, gte } from "drizzle-orm";
+import { eq, desc, gte, sql } from "drizzle-orm";
 import { db, usersTable, visitsTable } from "@workspace/db";
 
 type User = typeof usersTable.$inferSelect;
@@ -51,8 +51,35 @@ export const storage = {
     return user;
   },
 
-  async recordVisit(userId: number, email: string | null): Promise<void> {
-    await db.insert(visitsTable).values({ userId, email });
+  async recordVisit(
+    userId: number | null,
+    email: string | null,
+    sessionId?: string | null,
+  ): Promise<void> {
+    await db
+      .insert(visitsTable)
+      .values({ userId, email, sessionId: sessionId ?? null });
+  },
+
+  // Unique visitors are counted by a stable identity: the signed-in email when
+  // available, otherwise the anonymous session id. Total visits is every row.
+  async getVisitorStats(): Promise<{
+    uniqueVisitors: number;
+    totalVisits: number;
+  }> {
+    const result = await db.execute(
+      sql`select
+            count(*)::int as total_visits,
+            count(distinct coalesce(email, session_id))::int as unique_visitors
+          from visits`,
+    );
+    const row = result.rows[0] as
+      | { total_visits?: number; unique_visitors?: number }
+      | undefined;
+    return {
+      uniqueVisitors: row?.unique_visitors ?? 0,
+      totalVisits: row?.total_visits ?? 0,
+    };
   },
 
   async getVisits(limit: number): Promise<Visit[]> {

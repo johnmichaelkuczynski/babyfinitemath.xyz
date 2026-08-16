@@ -7,9 +7,14 @@ import {
 import {
   QueryClient,
   QueryClientProvider,
+  QueryCache,
+  MutationCache,
 } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { LoginRequiredModal } from "@/components/LoginRequiredModal";
+import { handleMaybeLoginRequired } from "@/lib/loginRequired";
+import { useAuth } from "@/hooks/useAuth";
 import NotFound from "@/pages/not-found";
 
 import Landing from "@/pages/Landing";
@@ -27,19 +32,30 @@ import ReasoningRunner from "@/pages/ReasoningRunner";
 import Grades from "@/pages/Grades";
 import AdminMode from "@/pages/AdminMode";
 
-const queryClient = new QueryClient();
+// Globally watch for the anonymous "sample limit" 401 (login_required) coming
+// from AI endpoints and surface the sign-in gate. Ordinary 401s are ignored.
+const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError: (error) => handleMaybeLoginRequired(error),
+  }),
+  mutationCache: new MutationCache({
+    onError: (error) => handleMaybeLoginRequired(error),
+  }),
+});
 
-// All routes are open — no login required to use the course.
-// In development, useAuth returns a mock user so there is no login wall at all.
-// In production, Google login is available only for the feedback flow (see Layout).
-function HomeRedirect() {
-  return <Redirect to="/dashboard" />;
+// The whole course is open — anonymous visitors can browse everything. Signed-in
+// visitors skip the marketing Landing and go straight to their dashboard.
+function Home() {
+  const { authenticated, isLoading } = useAuth();
+  if (isLoading) return null;
+  if (authenticated) return <Redirect to="/dashboard" />;
+  return <Landing />;
 }
 
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={HomeRedirect} />
+      <Route path="/" component={Home} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/assignments" component={Assignments} />
       <Route path="/assignments/:id/practice" component={PracticeAssignment} />
@@ -64,6 +80,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <Router />
+          <LoginRequiredModal />
           <Toaster />
         </TooltipProvider>
       </QueryClientProvider>

@@ -6,6 +6,7 @@ import fs from "node:fs";
 import { setupAuth } from "./auth";
 import router from "./routes";
 import { logger } from "./lib/logger";
+import { trackVisit } from "./lib/metering";
 
 const app: Express = express();
 
@@ -35,6 +36,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Google OAuth + session-based authentication
 setupAuth(app);
+
+// Record one visit per browser session (anonymous or signed-in).
+app.use(trackVisit);
 
 app.use("/api", router);
 

@@ -4,6 +4,7 @@ import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
 import type { Express, RequestHandler } from "express";
 import { storage } from "./lib/storage";
+import { OWNER_EMAIL } from "./lib/metering";
 import pg from "pg";
 
 declare global {
@@ -113,6 +114,39 @@ export function setupAuth(app: Express) {
 
   app.use(passport.initialize());
   app.use(passport.session());
+
+  // --- Development auto-login ---
+  // Outside production, Google OAuth is usually unconfigured, so there is no way
+  // to obtain an authenticated session. To keep the signed-in code paths
+  // (unmetered AI, owner-only analytics) exercisable in dev, transparently log
+  // in a stable local user (dev@localhost) on the first request of a session.
+  // This never runs in production.
+  if (!isProduction) {
+    app.use((req, _res, next) => {
+      (async () => {
+        try {
+          if (req.isAuthenticated && req.isAuthenticated()) return next();
+          let user = await storage.getUserByEmail("dev@localhost");
+          if (!user) {
+            user = await storage.createUserWithGoogle({
+              username: "dev",
+              googleId: "dev-local",
+              email: "dev@localhost",
+              displayName: "Dev User",
+            });
+            console.log(`Dev auto-login: created local user ${user.id}`);
+          }
+          req.login(user, (err) => {
+            if (err) console.error("Dev auto-login failed:", err);
+            next();
+          });
+        } catch (err) {
+          console.error("Dev auto-login error:", err);
+          next();
+        }
+      })();
+    });
+  }
 
   passport.serializeUser((user, done) => {
     done(null, user.id);
@@ -245,15 +279,8 @@ export function setupAuth(app: Express) {
           callbackURL: getRequestCallbackURL(req),
         } as any)(req, res, next),
       (req: any, res: any) => {
-        (async () => {
-          try {
-            if (req.user) {
-              await storage.recordVisit(req.user.id, req.user.email ?? null);
-            }
-          } catch (visitErr) {
-            console.error("Failed to record login event:", visitErr);
-          }
-        })();
+        // Visit tracking is handled once per browser session by the trackVisit
+        // middleware; recording again here double-counted logins.
         req.session.save(() => {
           res.redirect("/");
         });
@@ -305,6 +332,17 @@ export function setupAuth(app: Express) {
         res.json({ success: true });
       });
     });
+  });
+
+  // --- Admin: unique visitor stats (restricted to the site owner) ---
+  app.get("/api/admin/visitors", isAdmin, async (_req, res) => {
+    try {
+      const stats = await storage.getVisitorStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Admin visitors error:", error);
+      res.status(500).json({ error: "Failed to load visitor stats" });
+    }
   });
 
   // --- Admin: visitor analytics (restricted to the site owner) ---
@@ -376,13 +414,23 @@ export function setupAuth(app: Express) {
   });
 }
 
-const ADMIN_EMAIL = "johnmichaelkuczynski@gmail.com";
+const ADMIN_EMAIL = OWNER_EMAIL;
 
 export const isAdmin: RequestHandler = (req, res, next) => {
-  if (req.isAuthenticated() && req.user?.email?.toLowerCase() === ADMIN_EMAIL) {
+  if (
+    req.isAuthenticated() &&
+    req.user?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase()
+  ) {
     return next();
   }
   res.status(403).json({ error: "Not authorized" });
+};
+
+// Owner-only in production; open in local development so the dev auto-login
+// user can still exercise the admin/diagnostics tooling.
+export const isOwnerOrDev: RequestHandler = (req, res, next) => {
+  if (process.env.NODE_ENV !== "production") return next();
+  return isAdmin(req, res, next);
 };
 
 export const isAuthenticated: RequestHandler = (req, res, next) => {
