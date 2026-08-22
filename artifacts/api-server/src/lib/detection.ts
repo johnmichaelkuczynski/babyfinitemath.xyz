@@ -74,12 +74,25 @@ export function heuristicAiScore(text: string): number {
   return Math.min(1, lenScore * 0.4 + hitScore * 0.5);
 }
 
+let lastGptzeroError: string | null = null;
+
+export function getLastGptzeroError(): string | null {
+  return lastGptzeroError;
+}
+
 // Real GPTZero API call. Returns null if no key or on failure (caller falls back).
 export async function gptzeroAiScore(text: string): Promise<number | null> {
   const apiKey = process.env.GPTZERO_API_KEY;
-  if (!apiKey) return null;
+  lastGptzeroError = null;
+  if (!apiKey) {
+    lastGptzeroError = "GPTZERO_API_KEY is not set";
+    return null;
+  }
   const t = text.trim();
-  if (t.length < 40) return null;
+  if (t.length < 40) {
+    lastGptzeroError = "Text must contain at least 40 characters";
+    return null;
+  }
   try {
     const res = await fetch("https://api.gptzero.me/v2/predict/text", {
       method: "POST",
@@ -88,13 +101,33 @@ export async function gptzeroAiScore(text: string): Promise<number | null> {
         Accept: "application/json",
         "x-api-key": apiKey,
       },
-      body: JSON.stringify({ document: t, multilingual: false }),
+      body: JSON.stringify({ document: t }),
     });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      const raw = await res.text();
+      let detail = "";
+      try {
+        const parsed = JSON.parse(raw) as {
+          detail?: unknown;
+          message?: unknown;
+          error?: unknown;
+        };
+        const candidate = parsed.detail ?? parsed.message ?? parsed.error;
+        if (typeof candidate === "string") detail = `: ${candidate}`;
+      } catch {
+        // Status is sufficient when GPTZero returns a non-JSON error page.
+      }
+      lastGptzeroError = `HTTP ${res.status}${detail}`;
+      console.warn(`GPTZero request failed: ${lastGptzeroError}`);
+      return null;
+    }
     const data: unknown = await res.json();
     // GPTZero shape: { documents: [{ class_probabilities: { ai, human, mixed }, completely_generated_prob, ... }] }
     const doc = (data as { documents?: Array<Record<string, unknown>> })?.documents?.[0];
-    if (!doc) return null;
+    if (!doc) {
+      lastGptzeroError = "Response did not include a document result";
+      return null;
+    }
     const cls = doc.class_probabilities as
       | { ai?: number; human?: number; mixed?: number }
       | undefined;
@@ -105,9 +138,15 @@ export async function gptzeroAiScore(text: string): Promise<number | null> {
       typeof cls?.ai === "number"
         ? cls.ai + (typeof cls.mixed === "number" ? cls.mixed * 0.5 : 0)
         : cg;
-    if (typeof aiProb !== "number") return null;
+    if (typeof aiProb !== "number") {
+      lastGptzeroError = "Response did not include an AI probability";
+      return null;
+    }
     return Math.max(0, Math.min(1, aiProb));
-  } catch {
+  } catch (error) {
+    lastGptzeroError =
+      error instanceof Error ? error.message : "Network request failed";
+    console.warn(`GPTZero request failed: ${lastGptzeroError}`);
     return null;
   }
 }

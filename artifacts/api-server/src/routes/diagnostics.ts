@@ -14,7 +14,11 @@ import {
   diagnosticAttemptsTable,
 } from "@workspace/db";
 import { chatText, chatJson, FAST_MODEL } from "../lib/ai";
-import { detect, gptzeroAiScore } from "../lib/detection";
+import {
+  detect,
+  getLastGptzeroError,
+  gptzeroAiScore,
+} from "../lib/detection";
 import { gradeAnswer } from "../lib/grading";
 
 const router: IRouter = Router();
@@ -126,7 +130,9 @@ router.get("/diagnostics/system", async (_req, res) => {
         "In conclusion, the multifaceted tapestry of data-driven decision-making is paramount to navigating the labyrinthine landscape of contemporary business intelligence and its many implications.",
       );
       if (score == null)
-        throw new Error("GPTZero returned no score (key invalid or API down)");
+        throw new Error(
+          `GPTZero returned no score (${getLastGptzeroError() ?? "unknown error"})`,
+        );
       return `live API responded · ai=${(score * 100).toFixed(0)}%`;
     }),
   );
