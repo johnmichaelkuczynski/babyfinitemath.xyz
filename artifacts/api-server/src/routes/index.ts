@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { isOwnerOrDev } from "../auth";
+import { internalToolsOnly } from "../auth";
 import healthRouter from "./health";
 import courseRouter from "./course";
 import assignmentsRouter from "./assignments";
@@ -22,10 +22,10 @@ router.use(practiceRouter);
 router.use(practiceAssignmentsRouter);
 router.use(tutorRouter);
 // Detection scans, system diagnostics (bulk generation, reset, lecture
-// expansion), and the grader lab are expensive and/or destructive. In
-// production they are restricted to the owner; local dev remains open.
+// expansion), and the grader lab are expensive and/or destructive. With no
+// account system they are disabled in production and remain available locally.
 // Path-scoped so it never touches the other routers mounted at "/".
-router.use(["/detection", "/diagnostics", "/admin"], isOwnerOrDev);
+router.use(["/detection", "/diagnostics", "/admin"], internalToolsOnly);
 router.use(detectionRouter);
 router.use(analyticsRouter);
 router.use(diagnosticsRouter);

@@ -7,7 +7,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { ReasoningCallout } from "@/components/ReasoningCallout";
 import { TopicsRail } from "@/components/TopicsRail";
-import { VisitorStat } from "@/components/VisitorStat";
 
 export default function Dashboard() {
   const { data: overview, isLoading: isLoadingOverview } = useGetCourseOverview();
@@ -25,8 +24,6 @@ export default function Dashboard() {
           </h1>
           <p className="text-muted-foreground">Welcome to your Prompt Engineering course workspace.</p>
         </div>
-
-        <VisitorStat />
 
         <ReasoningCallout phase="before" />
 

@@ -2,19 +2,13 @@ import {
   Switch,
   Route,
   Router as WouterRouter,
-  Redirect,
 } from "wouter";
 import {
   QueryClient,
   QueryClientProvider,
-  QueryCache,
-  MutationCache,
 } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { LoginRequiredModal } from "@/components/LoginRequiredModal";
-import { handleMaybeLoginRequired } from "@/lib/loginRequired";
-import { useAuth } from "@/hooks/useAuth";
 import NotFound from "@/pages/not-found";
 
 import Landing from "@/pages/Landing";
@@ -32,23 +26,9 @@ import ReasoningRunner from "@/pages/ReasoningRunner";
 import Grades from "@/pages/Grades";
 import AdminMode from "@/pages/AdminMode";
 
-// Globally watch for the anonymous "sample limit" 401 (login_required) coming
-// from AI endpoints and surface the sign-in gate. Ordinary 401s are ignored.
-const queryClient = new QueryClient({
-  queryCache: new QueryCache({
-    onError: (error) => handleMaybeLoginRequired(error),
-  }),
-  mutationCache: new MutationCache({
-    onError: (error) => handleMaybeLoginRequired(error),
-  }),
-});
+const queryClient = new QueryClient();
 
-// The whole course is open — anonymous visitors can browse everything. Signed-in
-// visitors skip the marketing Landing and go straight to their dashboard.
 function Home() {
-  const { authenticated, isLoading } = useAuth();
-  if (isLoading) return null;
-  if (authenticated) return <Redirect to="/dashboard" />;
   return <Landing />;
 }
 
@@ -80,7 +60,6 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <Router />
-          <LoginRequiredModal />
           <Toaster />
         </TooltipProvider>
       </QueryClientProvider>

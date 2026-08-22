@@ -10,8 +10,6 @@ import {
 import { Link } from "wouter";
 import { TopicsRail } from "@/components/TopicsRail";
 
-const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
-
 const features = [
   {
     icon: BookOpen,
@@ -58,14 +56,6 @@ export default function Landing() {
           </span>
         </div>
         <nav className="flex items-center gap-2" aria-label="Primary">
-          <a href={`${basePath}/api/auth/google`}>
-            <button
-              className="px-4 py-2 rounded-md text-sm font-medium border border-border hover:bg-secondary transition-colors"
-              data-testid="button-sign-in"
-            >
-              Sign in
-            </button>
-          </a>
           <Link href="/dashboard">
             <button
               className="px-4 py-2 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
