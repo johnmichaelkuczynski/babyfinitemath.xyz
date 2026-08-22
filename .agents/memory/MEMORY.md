@@ -1,5 +1,6 @@
 - [Course answer-key QC diagnostic](course-qc-diagnostic.md) — LLM key-legitimacy checks must judge against the course's own lecture text (not generic knowledge), or correct course-specific keys false-flag.
 - [No-auth public course](no-auth-public-course.md) — permanent mandate: no login, OAuth, accounts, auth endpoints, or AI-output sign-in gate; sessions are anonymous only.
+- [GPTZero API behavior](gptzero-api-behavior.md) — current text endpoint rejects the obsolete multilingual field; surface safe HTTP errors instead of silently masking them with fallback detection.
 - [esbuild __dirname asset copy](esbuild-dirname-asset-copy.md) — packages that read files relative to __dirname (e.g. connect-pg-simple/table.sql) break in the esbuild bundle; copy the asset into dist/ in build.mjs after esbuild finishes.
 - [Tutor starter-question style](tutor-starter-questions.md) — lecture starter questions must ALWAYS be concrete-case application; never definition/abstract/comparison questions (user mandate).
 - [Course content reseed](course-content-reseed.md) — seeded data migrations must self-heal via a content marker + replace-in-transaction; "seed if empty" strands old content in existing/prod DBs (prod writes are read-only).
