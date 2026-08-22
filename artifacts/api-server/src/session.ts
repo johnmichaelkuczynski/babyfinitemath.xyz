@@ -1,12 +1,12 @@
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
-import type { Express, RequestHandler } from "express";
+import type { Express } from "express";
 import pg from "pg";
+import { storage } from "./lib/storage";
 
 /**
- * The course is fully public: there are no accounts, OAuth providers, login
- * routes, or user identity checks. We retain an anonymous browser session only
- * to keep a visitor's course progress and visit count together.
+ * The course is fully public. Anonymous browser sessions are used only to
+ * preserve a visitor's course progress and to count unique browser visits.
  */
 export function setupSession(app: Express) {
   app.set("trust proxy", 1);
@@ -61,13 +61,14 @@ export function setupSession(app: Express) {
       },
     }),
   );
-}
 
-/**
- * Internal bulk-generation and reset tools are intentionally unavailable in
- * production now that the public course has no authenticated administrator.
- */
-export const internalToolsOnly: RequestHandler = (_req, res, next) => {
-  if (process.env.NODE_ENV !== "production") return next();
-  res.status(404).json({ error: "Not found" });
-};
+  // Without accounts, this course-wide metric is available to every visitor.
+  app.get("/api/admin/visitors", async (_req, res) => {
+    try {
+      res.json(await storage.getVisitorStats());
+    } catch (error) {
+      console.error("Visitor stats error:", error);
+      res.status(500).json({ error: "Failed to load visitor stats" });
+    }
+  });
+}
