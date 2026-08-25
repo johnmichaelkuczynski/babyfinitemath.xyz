@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { TopicsRail } from "@/components/TopicsRail";
+import { CompanyContact } from "@/components/CompanyContact";
 
 const features = [
   {
@@ -121,9 +122,14 @@ export default function Landing() {
         </main>
       </div>
 
-      <footer className="border-t border-border px-6 py-6 text-center text-sm text-muted-foreground">
-        Prompt Engineering — where the curriculum, the tutor, the grader, and the
-        integrity check all live in one room.
+      <footer className="border-t border-border px-6 py-6 text-sm text-muted-foreground">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
+          <p className="text-center sm:text-left">
+            Prompt Engineering — where the curriculum, the tutor, the grader, and
+            the integrity check all live in one room.
+          </p>
+          <CompanyContact className="shrink-0" />
+        </div>
       </footer>
     </div>
   );

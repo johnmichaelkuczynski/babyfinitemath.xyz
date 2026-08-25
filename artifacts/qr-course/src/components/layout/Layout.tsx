@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { LayoutDashboard, PenTool, BarChart3, Activity, RotateCcw, Sparkles, Scale, GraduationCap, ShieldCheck, Search } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAdminMode } from "@/lib/adminMode";
+import { CompanyContact } from "@/components/CompanyContact";
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -54,8 +55,8 @@ export function Sidebar() {
         })}
       </div>
 
-      <div className="p-4 border-t border-border text-xs text-muted-foreground text-center">
-        Prompt Engineering
+      <div className="p-4 border-t border-border text-muted-foreground">
+        <CompanyContact compact className="mx-auto" />
       </div>
     </div>
   );
