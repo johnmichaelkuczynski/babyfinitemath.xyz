@@ -212,7 +212,18 @@ export default function VideoWithControls() {
 
   const barVisible = !collapsed || hovering || tapPinned;
 
-  if (!isIframed) return <VideoTemplate />;
+  if (!isIframed) {
+    return (
+      <main className="min-h-screen bg-[#FDFCFB]">
+        <h1 className="sr-only">Prompt Engineering product walkthrough</h1>
+        <VideoTemplate autoPlay={false} controls loop={false} syncToAudio />
+        <p className="mx-auto max-w-3xl px-6 pt-4 text-sm text-[#4A5568]">
+          Use the audio controls to play, pause, or adjust the narration. Captions
+          appear over the walkthrough while it plays.
+        </p>
+      </main>
+    );
+  }
 
   return (
     <div className="relative w-full h-screen">

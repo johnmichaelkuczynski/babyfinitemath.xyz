@@ -224,6 +224,7 @@ export default function TopicPractice() {
         <div className="flex flex-col gap-2">
           <AnswerInput
             value={answer}
+            label="Answer to the practice problem"
             onChange={(val, t) => {
               setAnswer(val);
               setTrace(t);

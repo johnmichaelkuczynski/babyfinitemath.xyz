@@ -241,12 +241,12 @@ export default function LectureView() {
   return (
     <Layout>
       <div className="px-6 pt-4 pb-2">
-        <Link href={lecture ? `/weeks/${lecture.weekNumber}` : "/"}>
-          <Button variant="ghost" className="-ml-2 text-muted-foreground hover:text-foreground">
+        <Button asChild variant="ghost" className="-ml-2 text-muted-foreground hover:text-foreground">
+          <Link href={lecture ? `/weeks/${lecture.weekNumber}` : "/"}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Week {lecture?.weekNumber ?? ""}
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       </div>
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-0">
@@ -402,7 +402,11 @@ export default function LectureView() {
                       </button>
                     ))}
                   </div>
+                  <label htmlFor="rewrite-instruction" className="sr-only">
+                    Rewrite instruction
+                  </label>
                   <textarea
+                    id="rewrite-instruction"
                     value={rewriteText}
                     onChange={(e) => setRewriteText(e.target.value)}
                     onKeyDown={(e) => {
@@ -532,11 +536,11 @@ export default function LectureView() {
               {(prevLecture || nextLecture) && (
                 <nav className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {prevLecture ? (
-                    <Link href={`/lectures/${prevLecture.id}`}>
-                      <button
-                        className="group w-full h-full text-left rounded-lg border border-border bg-card hover:border-primary/50 transition-colors p-4 flex items-center gap-3"
-                        data-testid="button-prev-lecture"
-                      >
+                    <Link
+                      href={`/lectures/${prevLecture.id}`}
+                      className="group w-full h-full text-left rounded-lg border border-border bg-card hover:border-primary/50 transition-colors p-4 flex items-center gap-3"
+                      data-testid="button-prev-lecture"
+                    >
                         <ArrowLeft className="w-4 h-4 text-muted-foreground group-hover:text-primary shrink-0" />
                         <span className="flex flex-col min-w-0">
                           <span className="text-xs uppercase tracking-wider text-muted-foreground">
@@ -544,17 +548,16 @@ export default function LectureView() {
                           </span>
                           <span className="font-medium truncate">{prevLecture.title}</span>
                         </span>
-                      </button>
                     </Link>
                   ) : (
                     <span className="hidden sm:block" />
                   )}
                   {nextLecture && (
-                    <Link href={`/lectures/${nextLecture.id}`} className="sm:col-start-2">
-                      <button
-                        className="group w-full h-full text-right rounded-lg border border-primary/40 bg-primary/5 hover:border-primary transition-colors p-4 flex items-center justify-end gap-3"
-                        data-testid="button-next-lecture"
-                      >
+                    <Link
+                      href={`/lectures/${nextLecture.id}`}
+                      className="sm:col-start-2 group w-full h-full text-right rounded-lg border border-primary/40 bg-primary/5 hover:border-primary transition-colors p-4 flex items-center justify-end gap-3"
+                      data-testid="button-next-lecture"
+                    >
                         <span className="flex flex-col min-w-0 items-end">
                           <span className="text-xs uppercase tracking-wider text-primary/80">
                             Next lecture
@@ -562,7 +565,6 @@ export default function LectureView() {
                           <span className="font-medium truncate">{nextLecture.title}</span>
                         </span>
                         <ArrowRight className="w-4 h-4 text-primary shrink-0" />
-                      </button>
                     </Link>
                   )}
                 </nav>
@@ -765,7 +767,11 @@ function TutorPane({
     <div className="flex-1 flex flex-col min-h-0">
       <div className="border-b border-border bg-background p-3 flex flex-col gap-2">
         <div className="flex gap-2 items-end">
+          <label htmlFor="lecture-tutor-question" className="sr-only">
+            Message for the tutor
+          </label>
           <textarea
+            id="lecture-tutor-question"
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -780,7 +786,12 @@ function TutorPane({
             className="flex-1 bg-secondary border-none rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary resize-y min-h-[96px] max-h-[280px]"
             data-testid="input-tutor-question"
           />
-          <Button size="lg" onClick={send} disabled={!input.trim() || ask.isPending}>
+          <Button
+            size="lg"
+            onClick={send}
+            disabled={!input.trim() || ask.isPending}
+            aria-label="Send message to tutor"
+          >
             <Send className="w-4 h-4" />
           </Button>
         </div>
@@ -992,6 +1003,7 @@ function PracticePane({
         <div className="flex flex-col gap-2">
           <AnswerInput
             value={answer}
+            label="Answer to the practice problem"
             onChange={(val, t) => {
               setAnswer(val);
               setTrace(t);

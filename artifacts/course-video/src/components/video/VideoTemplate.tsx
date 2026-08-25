@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useVideoPlayer } from '@/lib/video';
+import { getNarrationCue } from './narrationCues';
 import { Scene1 } from './video_scenes/Scene1';
 import { Scene2 } from './video_scenes/Scene2';
 import { Scene3 } from './video_scenes/Scene3';
@@ -51,14 +52,26 @@ export default function VideoTemplate({
   durations = SCENE_DURATIONS,
   loop = true,
   muted = false,
+  autoPlay = true,
+  controls = false,
+  syncToAudio = false,
   onSceneChange,
 }: {
   durations?: Record<string, number>;
   loop?: boolean;
   muted?: boolean;
+  autoPlay?: boolean;
+  controls?: boolean;
+  /** Lets the audio element own scene timing for an accessible public player. */
+  syncToAudio?: boolean;
   onSceneChange?: (sceneKey: string) => void;
 } = {}) {
-  const { currentSceneKey } = useVideoPlayer({ durations, loop });
+  const [currentTime, setCurrentTime] = useState(0);
+  const { currentSceneKey } = useVideoPlayer({
+    durations,
+    loop,
+    playbackTime: syncToAudio ? currentTime : undefined,
+  });
 
   useEffect(() => {
     onSceneChange?.(currentSceneKey);
@@ -71,14 +84,16 @@ export default function VideoTemplate({
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !autoPlay) return;
     audio.volume = 1.0;
     const targetTime = SCENE_START_SEC[baseSceneKey] ?? 0;
     if (Math.abs(audio.currentTime - targetTime) > AUDIO_SEEK_EPSILON_SEC) {
       audio.currentTime = targetTime;
     }
     audio.play().catch(() => {});
-  }, [currentSceneKey, baseSceneKey, muted]);
+  }, [currentSceneKey, baseSceneKey, muted, autoPlay]);
+
+  const activeCue = getNarrationCue(currentTime);
 
   return (
     <div
@@ -88,13 +103,37 @@ export default function VideoTemplate({
       <AnimatePresence mode="popLayout">
         {SceneComponent && <SceneComponent key={currentSceneKey} />}
       </AnimatePresence>
+      {activeCue && (
+        <p
+          className="absolute bottom-20 left-4 right-4 z-40 mx-auto max-w-3xl rounded-md bg-black/75 px-4 py-3 text-center text-sm leading-relaxed text-white"
+          aria-live="polite"
+          aria-label="Current caption"
+        >
+          {activeCue.text}
+        </p>
+      )}
       <audio
         ref={audioRef}
         src={`${import.meta.env.BASE_URL}audio/voiceover.mp3`}
         preload="auto"
-        autoPlay
+        autoPlay={autoPlay}
+        controls={controls}
         muted={muted}
-      />
+        loop={loop}
+        onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
+        onSeeked={(event) => setCurrentTime(event.currentTarget.currentTime)}
+        onLoadedMetadata={(event) => setCurrentTime(event.currentTarget.currentTime)}
+        aria-label="Prompt Engineering walkthrough narration"
+        className={controls ? "absolute bottom-4 left-4 right-4 z-50 w-[calc(100%-2rem)]" : undefined}
+      >
+        <track
+          kind="captions"
+          src={`${import.meta.env.BASE_URL}audio/voiceover.vtt`}
+          srcLang="en"
+          label="English"
+          default
+        />
+      </audio>
     </div>
   );
 }

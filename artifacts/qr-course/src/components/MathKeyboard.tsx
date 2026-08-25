@@ -71,9 +71,9 @@ interface MathKeyboardProps {
 }
 
 /**
- * A compact symbol palette for entering math/stat notation. Buttons use
- * onMouseDown + preventDefault so the associated textarea keeps focus and its
- * caret position when a symbol is inserted.
+ * A compact symbol palette for entering math/stat notation. The mousedown
+ * handler only preserves textarea focus; insertion happens on click so mouse,
+ * touch, Enter, and Space activation all use the same path.
  *
  * Keys are grouped into sections (Arithmetic · Algebra · Sets · Logic · Stats)
  * separated by thin vertical dividers, covering every symbol a learner may need
@@ -99,10 +99,8 @@ export function MathKeyboard({ onInsert, keys = DEFAULT_KEYS, className }: MathK
             type="button"
             title={k.title || k.label}
             aria-label={k.title || k.label}
-            onMouseDown={(e) => {
-              e.preventDefault();
-              onInsert(k.insert, k.cursorBack);
-            }}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => onInsert(k.insert, k.cursorBack)}
             className="min-w-[2.25rem] h-9 px-2 flex items-center justify-center rounded-md border border-input bg-card text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors select-none"
           >
             {k.label}

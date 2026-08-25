@@ -57,13 +57,12 @@ export default function Landing() {
           </span>
         </div>
         <nav className="flex items-center gap-2" aria-label="Primary">
-          <Link href="/dashboard">
-            <button
-              className="px-4 py-2 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-              data-testid="button-header-start"
-            >
+          <Link
+            href="/dashboard"
+            className="px-4 py-2 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            data-testid="button-header-start"
+          >
               Start the course
-            </button>
           </Link>
         </nav>
       </header>
@@ -88,12 +87,12 @@ export default function Landing() {
             </p>
             <div className="flex items-center justify-center gap-3">
               <Link href="/dashboard">
-                <button
-                  className="px-6 py-3 rounded-md text-base font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                <span
+                  className="px-6 py-3 rounded-md text-base font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors inline-flex"
                   data-testid="button-cta-start"
                 >
                   Start the course
-                </button>
+                </span>
               </Link>
             </div>
           </section>
@@ -104,6 +103,7 @@ export default function Landing() {
           </section>
 
           <section className="pb-16">
+            <h2 className="text-2xl font-serif font-semibold mb-5">What you’ll learn</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {features.map((f) => (
                 <div

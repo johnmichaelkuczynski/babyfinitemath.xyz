@@ -35,25 +35,26 @@ export function Sidebar() {
         </Link>
       </div>
 
-      <div className="flex-1 py-6 flex flex-col gap-2 px-4">
+      <nav className="flex-1 py-6 flex flex-col gap-2 px-4" aria-label="Course navigation">
         {navItems.map((item) => {
           const isActive = location === item.href || (item.href !== "/" && location.startsWith(item.href));
           return (
-            <Link key={item.href} href={item.href}>
-              <div
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-md cursor-pointer transition-colors ${
-                  isActive
-                    ? "bg-primary text-primary-foreground font-medium"
-                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                }`}
-              >
-                <item.icon className="w-5 h-5" />
-                <span>{item.label}</span>
-              </div>
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-md cursor-pointer transition-colors ${
+                isActive
+                  ? "bg-primary text-primary-foreground font-medium"
+                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+              }`}
+              aria-current={isActive ? "page" : undefined}
+            >
+              <item.icon className="w-5 h-5" aria-hidden="true" />
+              <span>{item.label}</span>
             </Link>
           );
         })}
-      </div>
+      </nav>
 
       <div className="p-4 border-t border-border text-muted-foreground">
         <CompanyContact compact className="mx-auto" />
@@ -150,18 +151,17 @@ function TopBar() {
         <RotateCcw className={`w-4 h-4 ${resetting ? "animate-spin" : ""}`} />
         {resetting ? "Resetting…" : "Reset course"}
       </button>
-      <Link href="/diagnostics">
-        <button
-          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-            active
-              ? "bg-primary text-primary-foreground"
-              : "border border-border hover:bg-secondary"
-          }`}
-          data-testid="button-diagnostic"
-        >
+      <Link
+        href="/diagnostics"
+        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+          active
+            ? "bg-primary text-primary-foreground"
+            : "border border-border hover:bg-secondary"
+        }`}
+        data-testid="button-diagnostic"
+      >
           <Activity className="w-4 h-4" />
           Diagnostic
-        </button>
       </Link>
 
       <button

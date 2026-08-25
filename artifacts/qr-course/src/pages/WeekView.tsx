@@ -74,7 +74,7 @@ export default function WeekView() {
                         {item.status.replace('_', ' ')}
                       </span>
                     </div>
-                    <CardTitle className="text-lg">{item.title}</CardTitle>
+                    <CardTitle as="h3" className="text-lg">{item.title}</CardTitle>
                   </CardHeader>
                   <CardContent className="flex flex-col gap-4">
                     <div className="text-sm text-muted-foreground flex gap-4">

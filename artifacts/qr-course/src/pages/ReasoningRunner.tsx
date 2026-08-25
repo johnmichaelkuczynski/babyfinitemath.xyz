@@ -322,11 +322,11 @@ export default function ReasoningRunner() {
             </p>
           )}
           <div>
-            <Link href="/reasoning">
-              <Button variant="outline" data-testid="button-back-reasoning-picker">
+            <Button asChild variant="outline" data-testid="button-back-reasoning-picker">
+              <Link href="/reasoning">
                 Back to Assessments
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
       </Layout>
@@ -369,9 +369,9 @@ export default function ReasoningRunner() {
               >
                 {startAttempt.isPending ? "Starting…" : "Retake assessment"}
               </Button>
-              <Link href="/reasoning">
-                <Button variant="outline" data-testid="button-back-reasoning">Back to Assessments</Button>
-              </Link>
+              <Button asChild variant="outline" data-testid="button-back-reasoning">
+                <Link href="/reasoning">Back to Assessments</Link>
+              </Button>
             </div>
           </div>
 
@@ -540,6 +540,7 @@ function Question({
           </p>
           <AnswerInput
             value={written}
+            label="Answer to assessment question"
             onChange={(val) => onWrite(val)}
             compact
             allowPaste

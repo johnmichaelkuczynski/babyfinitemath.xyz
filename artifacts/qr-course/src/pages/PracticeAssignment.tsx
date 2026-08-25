@@ -117,22 +117,23 @@ export default function PracticeAssignment() {
   return (
     <Layout>
       <div className="px-6 pt-4 pb-2 flex items-center justify-between">
-        <Link href="/assignments">
-          <Button
-            variant="ghost"
-            className="-ml-2 text-muted-foreground hover:text-foreground"
-          >
+        <Button
+          asChild
+          variant="ghost"
+          className="-ml-2 text-muted-foreground hover:text-foreground"
+        >
+          <Link href="/assignments">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Assignments
-          </Button>
-        </Link>
+          </Link>
+        </Button>
         {set && (
-          <Link href={`/assignments/${assignmentId}`}>
-            <Button variant="outline" size="sm">
+          <Button asChild variant="outline" size="sm">
+            <Link href={`/assignments/${assignmentId}`}>
               <GraduationCap className="w-4 h-4 mr-2" />
               Take the graded {set.kind}
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         )}
       </div>
 
@@ -208,6 +209,7 @@ export default function PracticeAssignment() {
 
                     <AnswerInput
                       value={answers[p.id] ?? ""}
+                      label={`Answer to Problem ${idx + 1}`}
                       onChange={(val, trace) => {
                         setAnswers((prev) => ({ ...prev, [p.id]: val }));
                         setTraces((prev) => ({ ...prev, [p.id]: trace }));
@@ -351,7 +353,11 @@ function TutorPane({
 
       <div className="border-b border-border bg-background p-3 flex flex-col gap-2">
         <div className="flex gap-2 items-end">
+          <label htmlFor="practice-tutor-question" className="sr-only">
+            Message for the tutor
+          </label>
           <textarea
+            id="practice-tutor-question"
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -365,7 +371,12 @@ function TutorPane({
             rows={4}
             className="flex-1 bg-secondary border-none rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary resize-y min-h-[96px] max-h-[280px]"
           />
-          <Button size="lg" onClick={send} disabled={!input.trim() || pending}>
+          <Button
+            size="lg"
+            onClick={send}
+            disabled={!input.trim() || pending}
+            aria-label="Send message to tutor"
+          >
             <Send className="w-4 h-4" />
           </Button>
         </div>

@@ -89,9 +89,9 @@ export default function AssignmentRunner() {
               <h1 className="text-3xl font-serif font-bold text-primary mb-2">{assignment.title} - Results</h1>
               <p className="text-muted-foreground">Score: {result.percent}% ({result.score}/{result.total})</p>
             </div>
-            <Link href={`/assignments`}>
-              <Button variant="outline">Back to Assignments</Button>
-            </Link>
+            <Button asChild variant="outline">
+              <Link href={`/assignments`}>Back to Assignments</Link>
+            </Button>
           </div>
           
           <div className="flex flex-col gap-6">
@@ -151,11 +151,11 @@ export default function AssignmentRunner() {
             Want to warm up first? Run an unlimited practice version that gives
             feedback and keeps the tutor with you.
           </div>
-          <Link href={`/assignments/${assignmentId}/practice`}>
-            <Button variant="outline" className="shrink-0">
+          <Button asChild variant="outline" className="shrink-0">
+            <Link href={`/assignments/${assignmentId}/practice`}>
               ✨ Practice this first
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
 
         {currentProblem ? (
@@ -167,6 +167,7 @@ export default function AssignmentRunner() {
             <div className="flex flex-col gap-4">
               <AnswerInput 
                 value={answers[currentProblem.id] || ""}
+                label={`Answer to Problem ${currentProblemIdx + 1}`}
                 onChange={(val, trace) => handleAnswerChange(currentProblem.id, val, trace)}
               />
             </div>

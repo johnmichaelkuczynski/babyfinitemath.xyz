@@ -51,7 +51,7 @@ export default function Assignments() {
                             {item.status.replace('_', ' ')}
                           </span>
                         </div>
-                        <CardTitle className="text-lg">{item.title}</CardTitle>
+                        <CardTitle as="h3" className="text-lg">{item.title}</CardTitle>
                       </CardHeader>
                       <CardContent className="flex flex-col gap-4">
                         <div className="text-sm text-muted-foreground flex gap-4">
@@ -61,17 +61,17 @@ export default function Assignments() {
                             <span className="font-semibold text-foreground">Score: {item.bestScore}%</span>
                           )}
                         </div>
-                        <Link href={`/assignments/${item.id}/practice`}>
-                          <Button className="w-full bg-chart-2 hover:bg-chart-2/90 text-white">
+                        <Button asChild className="w-full bg-chart-2 hover:bg-chart-2/90 text-white">
+                          <Link href={`/assignments/${item.id}/practice`}>
                             ✨ Practice first — unlimited & never graded
-                          </Button>
-                        </Link>
-                        <Link href={`/assignments/${item.id}`}>
-                          <Button className="w-full" variant={item.status === 'submitted' ? "outline" : "default"}>
+                          </Link>
+                        </Button>
+                        <Button asChild className="w-full" variant={item.status === 'submitted' ? "outline" : "default"}>
+                          <Link href={`/assignments/${item.id}`}>
                             {item.status === 'submitted' ? 'Review Results' :
                              item.status === 'in_progress' ? 'Resume' : 'Take the graded version'}
-                          </Button>
-                        </Link>
+                          </Link>
+                        </Button>
                       </CardContent>
                     </Card>
                   ))}

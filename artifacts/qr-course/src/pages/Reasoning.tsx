@@ -93,13 +93,13 @@ function InstrumentCard({
   return (
     <Card className="flex flex-col" data-testid={`card-reasoning-${instrument}`}>
       <CardHeader>
-        <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
+        <h3 className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
           <Icon className="w-3.5 h-3.5" />
           {INSTRUMENT_LABELS[instrument]}
-        </span>
-        <CardTitle className="text-base leading-snug">
+        </h3>
+        <p className="text-base font-semibold leading-snug">
           {INSTRUMENT_BLURBS[instrument]}
-        </CardTitle>
+        </p>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <p className="text-sm text-muted-foreground">
@@ -157,21 +157,16 @@ function InstrumentCard({
                       <Link
                         key={len}
                         href={`/reasoning/${a.id}?length=${len}`}
-                        className="block"
+                        className="w-full rounded-md border border-border hover:border-primary hover:bg-primary/5 transition-colors px-2 py-2 text-center"
+                        data-testid={`button-length-${a.id}-${len}`}
                       >
-                        <button
-                          type="button"
-                          className="w-full rounded-md border border-border hover:border-primary hover:bg-primary/5 transition-colors px-2 py-2 text-center"
-                          data-testid={`button-length-${a.id}-${len}`}
-                        >
-                          <span className="block text-xs font-semibold">
-                            {LENGTH_LABELS[len]}
-                          </span>
+                        <span className="block text-xs font-semibold">
+                          {LENGTH_LABELS[len]}
                           <span className="block text-[11px] text-muted-foreground">
                             {counts[len]}{" "}
                             {counts[len] === 1 ? "question" : "questions"}
                           </span>
-                        </button>
+                        </span>
                       </Link>
                     ))}
                   </div>

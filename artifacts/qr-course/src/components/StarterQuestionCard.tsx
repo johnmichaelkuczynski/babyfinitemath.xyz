@@ -100,7 +100,11 @@ export function StarterQuestionCard({
 
       {open && !feedback && (
         <div className="px-2 pb-2 flex flex-col gap-2">
+          <label htmlFor={`starter-answer-${index}`} className="sr-only">
+            Answer to starter question {index + 1}
+          </label>
           <textarea
+            id={`starter-answer-${index}`}
             ref={taRef}
             value={value}
             onChange={(e) => setValue(e.target.value)}

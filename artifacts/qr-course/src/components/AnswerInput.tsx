@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import React, { useId, useRef, useState, useEffect, useCallback } from "react";
 import { KeystrokeTrace } from "@workspace/api-client-react";
 import { useAdminMode } from "@/lib/adminMode";
 import { MathKeyboard, insertAtTextareaCursor } from "@/components/MathKeyboard";
@@ -12,12 +12,15 @@ interface AnswerInputProps {
   compact?: boolean;
   /** Allow pasting (used where there is no authorship detection, e.g. diagnostics). */
   allowPaste?: boolean;
+  /** Persistent accessible name for the response field. */
+  label?: string;
 }
 
-export function AnswerInput({ value, onChange, placeholder, disabled, compact, allowPaste }: AnswerInputProps) {
+export function AnswerInput({ value, onChange, placeholder, disabled, compact, allowPaste, label = "Answer" }: AnswerInputProps) {
   const [adminMode] = useAdminMode();
   const [sessionValue, setSessionValue] = useState(value);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const inputId = `answer-input-${useId().replace(/:/g, "")}`;
 
   const traceRef = useRef<KeystrokeTrace>({
     keystrokeCount: 0,
@@ -103,7 +106,9 @@ export function AnswerInput({ value, onChange, placeholder, disabled, compact, a
 
   return (
     <div className="flex flex-col gap-2 w-full">
+      <label htmlFor={inputId} className="sr-only">{label}</label>
       <textarea
+        id={inputId}
         ref={textareaRef}
         value={sessionValue}
         onChange={handleChange}
