@@ -1,3 +1,5 @@
+import zhiLogo from "../../../../attached_assets/zhi_logoc_1787651807972.png";
+
 type CompanyContactProps = {
   compact?: boolean;
   className?: string;
@@ -7,8 +9,6 @@ export function CompanyContact({
   compact = false,
   className = "",
 }: CompanyContactProps) {
-  const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
-
   return (
     <a
       href="https://zhisystems.org"
@@ -18,7 +18,7 @@ export function CompanyContact({
       aria-label="Contact ZHI Systems"
     >
       <img
-        src={`${basePath}/zhi-systems-logo.svg`}
+        src={zhiLogo}
         alt="ZHI Systems"
         className={compact ? "h-7 w-7 shrink-0" : "h-8 w-8 shrink-0"}
       />
