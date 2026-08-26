@@ -1,0 +1,66 @@
+# Prompt Engineering
+
+> A free, self-paced course for beginner-to-intermediate learners who want to write clearer, more reliable prompts and build safer AI workflows.
+
+Prompt Engineering teaches practical techniques for working effectively with language models. The course uses concrete examples and applied practice rather than memorization, and covers both prompt writing and the design of dependable AI features.
+
+## Course topics
+
+- Foundations: how language models read and continue text, prompt anatomy, specificity, constraints, roles, tone, format, length, and common failure modes.
+- Core techniques: zero-shot and few-shot prompting, examples, chain-of-thought reasoning, decomposition, context and reference material, delimiters, and prompt iteration.
+- Advanced patterns and reliability: structured output, JSON schemas, prompt chaining, self-critique, retrieval-augmented generation (RAG), tool use, temperature, sampling, evaluation, and testing.
+- Applications, safety, and systems: writing, summarizing, extraction, coding, data tasks, decision support, prompt injection, hallucination, bias, reusable templates, and building AI features.
+
+## Public course pages
+
+- [Course landing page](https://promptengineering.ink/): Overview of the free Prompt Engineering course.
+- [Week 1 — Foundations](https://promptengineering.ink/weeks/1): How models respond to prompts.
+- [Week 2 — Core techniques](https://promptengineering.ink/weeks/2): Workhorse methods for improving output quality.
+- [Week 3 — Advanced patterns and reliability](https://promptengineering.ink/weeks/3): Structured, grounded, and consistent outputs.
+- [Week 4 — Applications, safety, and building systems](https://promptengineering.ink/weeks/4): Applying prompting to real work and safer AI systems.
+
+## Public lecture pages
+
+### Week 1 — Foundations
+
+- [1.1 What prompt engineering is](https://promptengineering.ink/lectures/1)
+- [1.2 How language models read and continue text](https://promptengineering.ink/lectures/2)
+- [1.3 Anatomy of a prompt](https://promptengineering.ink/lectures/3)
+- [1.4 Being specific](https://promptengineering.ink/lectures/4)
+- [1.5 Setting role and tone](https://promptengineering.ink/lectures/5)
+- [1.6 Controlling format and length](https://promptengineering.ink/lectures/6)
+- [1.7 Common failure modes](https://promptengineering.ink/lectures/7)
+
+### Week 2 — Core techniques
+
+- [2.1 Zero-shot vs. few-shot prompting](https://promptengineering.ink/lectures/8)
+- [2.2 Writing good examples](https://promptengineering.ink/lectures/9)
+- [2.3 Chain-of-thought](https://promptengineering.ink/lectures/10)
+- [2.4 Decomposition](https://promptengineering.ink/lectures/11)
+- [2.5 Context and reference material](https://promptengineering.ink/lectures/12)
+- [2.6 Delimiters and structure](https://promptengineering.ink/lectures/13)
+- [2.7 Iterating on prompts](https://promptengineering.ink/lectures/14)
+
+### Week 3 — Advanced patterns and reliability
+
+- [3.1 Structured output](https://promptengineering.ink/lectures/15)
+- [3.2 Prompt chaining](https://promptengineering.ink/lectures/16)
+- [3.3 Self-critique and revision](https://promptengineering.ink/lectures/17)
+- [3.4 Grounding with retrieval](https://promptengineering.ink/lectures/18)
+- [3.5 Tool use and function calling](https://promptengineering.ink/lectures/19)
+- [3.6 Temperature and sampling](https://promptengineering.ink/lectures/20)
+- [3.7 Consistency, evaluation, and testing](https://promptengineering.ink/lectures/21)
+
+### Week 4 — Applications, safety, and building systems
+
+- [4.1 Writing, summarizing, and extraction](https://promptengineering.ink/lectures/22)
+- [4.2 Coding and data tasks](https://promptengineering.ink/lectures/23)
+- [4.3 Analysis and decision support](https://promptengineering.ink/lectures/24)
+- [4.4 Prompt injection and security](https://promptengineering.ink/lectures/25)
+- [4.5 Reducing hallucination and bias](https://promptengineering.ink/lectures/26)
+- [4.6 Reusable prompt templates](https://promptengineering.ink/lectures/27)
+- [4.7 From prompt to product](https://promptengineering.ink/lectures/28)
+
+## Walkthrough
+
+- [Prompt Engineering product walkthrough](https://promptengineering.ink/course-video/): A visual walkthrough of the course, tutor, practice, grading, and AI-authorship detection features.
