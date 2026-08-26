@@ -94,6 +94,12 @@ export default function Landing() {
                   Start the course
                 </span>
               </Link>
+              <a
+                href="/course-video/"
+                className="px-6 py-3 rounded-md text-base font-medium border border-border text-foreground hover:bg-secondary transition-colors"
+              >
+                Watch the course walkthrough
+              </a>
             </div>
           </section>
 
