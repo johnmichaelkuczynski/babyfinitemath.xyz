@@ -11,24 +11,28 @@ id = "zpoa4kJaFwLQ67_UaLoks"
 uri = "file://BLUEPRINT.md"
 type = "text"
 title = "QuantReason — App Blueprint"
+logical_id = "0c21244c-c18e-4e14-94f4-47f86bfb4cf6"
 
 [[outputs]]
 id = "gBlmXbiu3K5FNCNv2fX9f"
 uri = "file://README.md"
 type = "text"
 title = "README — Basic Finite Math"
+logical_id = "51d67a57-ca63-4a9d-98ad-752f55477f74"
 
 [[outputs]]
 id = "IhlBFpvwhqNicclr5C_QR"
 uri = "file://youtube-description.md"
 type = "text"
 title = "YouTube Description — Basic Finite Math"
+logical_id = "e824a7a7-79a8-40f8-9907-2d70b9f3b6fb"
 
 [[outputs]]
 id = "Qpzwo_NPMNo_tjMm6_ppp"
 uri = "file://artifacts/course-video/public/audio/bg_music.mp3"
 type = "audio"
 title = "background music"
+logical_id = "6a72cd8a-daf4-47a5-9854-27d905bbd057"
 
 [[outputs]]
 id = "GO8B7WRHd0CXA3m7WoGqP"
@@ -36,6 +40,7 @@ uri = "file://attached_assets/generated_audio/vo_tutor.mp3"
 type = "audio"
 title = "vo_tutor"
 description = "Text-to-speech audio: Ask the built-in tutor anything. Answers stream in, grounded in the exact section you're reading."
+logical_id = "0ebbff7a-8bd9-4521-a8dc-98bf4770eca2"
 
 [[outputs]]
 id = "aXHBB-gFf0VMDRNC-pxlK"
@@ -43,6 +48,7 @@ uri = "file://attached_assets/generated_audio/vo_intro.mp3"
 type = "audio"
 title = "vo_intro"
 description = "Text-to-speech audio: Prompt Engineering. A complete four-week course — taught, tutored, and graded entirely by A I."
+logical_id = "317526fa-9919-45bb-abab-447030c3994e"
 
 [[outputs]]
 id = "9E4hCJHZzU-SyHI_Qla4q"
@@ -50,6 +56,7 @@ uri = "file://attached_assets/generated_audio/vo_dashboard.mp3"
 type = "audio"
 title = "vo_dashboard"
 description = "Text-to-speech audio: Your dashboard tracks every assignment, practice session, and streak."
+logical_id = "aa64ddb7-44f2-436c-a342-f41c8704f6b2"
 
 [[outputs]]
 id = "6qnMLV9C1Xyo8-0Y3L95P"
@@ -57,6 +64,7 @@ uri = "file://attached_assets/generated_audio/vo_lecture.mp3"
 type = "audio"
 title = "vo_lecture"
 description = "Text-to-speech audio: Read every lesson at three depths — short, medium, or long."
+logical_id = "4e2e2ecc-e318-485b-9ccb-6c246295c66e"
 
 [[outputs]]
 id = "rG5wFga-w_Xrxdkl_jBj1"
@@ -64,6 +72,7 @@ uri = "file://attached_assets/generated_audio/vo_practice.mp3"
 type = "audio"
 title = "vo_practice"
 description = "Text-to-speech audio: Adaptive practice raises the difficulty as you improve, and eases off when you miss."
+logical_id = "3ae7351f-cdf5-466d-b4c8-a459bda30b9f"
 
 [[outputs]]
 id = "qptytx1pzpNvdViWmR_du"
@@ -71,6 +80,7 @@ uri = "file://attached_assets/generated_audio/vo_curriculum.mp3"
 type = "audio"
 title = "vo_curriculum"
 description = "Text-to-speech audio: Four weeks. Twenty-eight topics. From foundations to real applications."
+logical_id = "f42026c2-11ad-4c7c-8614-8db2894ab89e"
 
 [[outputs]]
 id = "GkuK2-TCWUdnayMxaeDu5"
@@ -78,6 +88,7 @@ uri = "file://attached_assets/generated_audio/vo_analytics.mp3"
 type = "audio"
 title = "vo_analytics"
 description = "Text-to-speech audio: Analytics show your mastery of every topic at a glance."
+logical_id = "6ad1c0d3-8af1-4d56-8177-0118318bf6a7"
 
 [[outputs]]
 id = "-1f3ARw5nnWD8-FCEePVa"
@@ -85,6 +96,7 @@ uri = "file://attached_assets/generated_audio/vo_grades.mp3"
 type = "audio"
 title = "vo_grades"
 description = "Text-to-speech audio: Homework, a midterm, and a final — graded by A I, with written feedback and two-layer authorship detection."
+logical_id = "5dfd8a7a-8e3e-47cb-8422-15cac6b9de77"
 
 [[outputs]]
 id = "JooeLiaJ7udW4Ir-M8H3u"
@@ -92,3 +104,11 @@ uri = "file://attached_assets/generated_audio/vo_outro.mp3"
 type = "audio"
 title = "vo_outro"
 description = "Text-to-speech audio: Prompt Engineering. Learn to write prompts that get the results you want."
+logical_id = "a5e80a61-2a6e-4103-99f5-492bbac37858"
+
+[[outputs]]
+id = "79oErNdKSAHNM13OgwfmJ"
+uri = "file://artifacts/prompt-engineering-tiktok/public/voiceover_2.mp3"
+type = "audio"
+title = "friendly male prompt engineering promo"
+description = "Text-to-speech audio: Want better results from AI? Visit promptengineering dot ink for a free, interactive four-week course packed with real lessons, assignments, practice, diagnostics, and analytics…"

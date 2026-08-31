@@ -1,0 +1,29 @@
+kind = "video"
+videoAspectRatio = "9:16"
+previewPath = "/prompt-engineering-tiktok/"
+title = "Prompt Engineering — TikTok Promo"
+description = "A short vertical TikTok promo for the Prompt Engineering course, using real app screenshots, a friendly male voiceover, and a ZHI Systems services callout with no music."
+version = "1.0.0"
+id = "artifacts/prompt-engineering-tiktok"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/prompt-engineering-tiktok/" ]
+localPort = 22598
+
+[services.development]
+run = "pnpm --filter @workspace/prompt-engineering-tiktok run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/prompt-engineering-tiktok", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/prompt-engineering-tiktok/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22598"
+BASE_PATH = "/prompt-engineering-tiktok/"
