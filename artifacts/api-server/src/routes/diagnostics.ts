@@ -153,7 +153,191 @@ router.get("/diagnostics/system", async (_req, res) => {
   res.json({ ok, generatedAt: new Date().toISOString(), steps });
 });
 
-// ---------- Diagnostic 2: synthetic student ----------
+// ---------- Diagnostic 2: live grading verification ----------
+router.post("/diagnostics/grading-verification", async (_req, res): Promise<void> => {
+  res.setTimeout(10 * 60 * 1000);
+
+  const [assignment] = await db
+    .select()
+    .from(assignmentsTable)
+    .orderBy(asc(assignmentsTable.weekNumber), asc(assignmentsTable.position))
+    .limit(1);
+  if (!assignment) {
+    res.status(500).json({ error: "No assignment is available for grading verification." });
+    return;
+  }
+  const problems = await db
+    .select()
+    .from(problemsTable)
+    .where(eq(problemsTable.assignmentId, assignment.id))
+    .orderBy(asc(problemsTable.position))
+    .limit(4);
+  if (problems.length < 4) {
+    res.status(500).json({ error: "At least four assignment problems are required." });
+    return;
+  }
+
+  const [attempt] = await db
+    .insert(attemptsTable)
+    .values({ assignmentId: assignment.id, status: "diagnostic" })
+    .returning();
+  if (!attempt) {
+    res.status(500).json({ error: "Could not create the diagnostic attempt." });
+    return;
+  }
+
+  const specifications = [
+    {
+      label: "Five-paragraph complete answer",
+      expectedCorrect: true,
+      instruction:
+        "Answer the question correctly in exactly five short paragraphs. Use plain language and no headings. Do not mention any reference answer.",
+    },
+    {
+      label: "One-sentence plain-language answer",
+      expectedCorrect: true,
+      instruction:
+        "Answer correctly in exactly one clear sentence. Avoid specialist jargon when ordinary words work. Do not mention any reference answer.",
+    },
+    {
+      label: "One-sentence paraphrase",
+      expectedCorrect: true,
+      instruction:
+        "Answer correctly in exactly one sentence using wording that is different from typical course terminology. Demonstrate understanding without naming a technique unless necessary.",
+    },
+    {
+      label: "Fluent but substantively wrong answer",
+      expectedCorrect: false,
+      instruction:
+        "Write exactly one polished sentence that directly answers the question but is substantively wrong. Make it plausible rather than nonsensical.",
+    },
+  ] as const;
+
+  const cases: Array<{
+    label: string;
+    problemId: number;
+    answerId: number | null;
+    attemptId: number;
+    prompt: string;
+    generatedAnswer: string;
+    storedAnswer: string;
+    answerCharacters: number;
+    storedCharacters: number;
+    storageIntact: boolean;
+    expectedCorrect: boolean;
+    gradedCorrect: boolean | null;
+    match: boolean;
+    explanation: string;
+    confidence: number | null;
+    evidence: string[];
+    error?: string;
+  }> = [];
+
+  for (let index = 0; index < problems.length; index += 1) {
+    const problem = problems[index]!;
+    const specification = specifications[index]!;
+    try {
+      const generatedAnswer = specification.expectedCorrect
+        ? (
+            await chatText(
+              [
+                "You write a simulated student's answer for a live grading diagnostic.",
+                "Follow the requested answer shape exactly.",
+                "Return only the answer itself, with no analysis or prefatory text.",
+              ].join("\n"),
+              JSON.stringify({
+                question: problem.prompt,
+                requestedAnswer: specification.instruction,
+              }),
+              FAST_MODEL,
+            )
+          ).trim()
+        : "A system message cannot influence an assistant without retraining, so the team should leave it unchanged and ask each user to request personalized investment opinions because user messages always override system instructions.";
+      if (!generatedAnswer) throw new Error("The answer generator returned empty text.");
+
+      const trace = syntheticTrace(generatedAnswer, Math.max(8_000, generatedAnswer.length * 55));
+      const [inserted] = await db
+        .insert(answersTable)
+        .values({
+          attemptId: attempt.id,
+          problemId: problem.id,
+          answer: generatedAnswer,
+          ...trace,
+        })
+        .returning();
+      if (!inserted) throw new Error("The generated answer was not persisted.");
+
+      const [stored] = await db
+        .select()
+        .from(answersTable)
+        .where(eq(answersTable.id, inserted.id));
+      if (!stored) throw new Error("The persisted answer could not be read back.");
+
+      const graded = await gradeAnswer({
+        prompt: problem.prompt,
+        correctAnswer: problem.correctAnswer,
+        userAnswer: stored.answer,
+      });
+      await db
+        .update(answersTable)
+        .set({ correct: graded.correct })
+        .where(eq(answersTable.id, inserted.id));
+
+      const storageIntact =
+        stored.answer === generatedAnswer &&
+        stored.answer.length === generatedAnswer.length;
+      cases.push({
+        label: specification.label,
+        problemId: problem.id,
+        answerId: inserted.id,
+        attemptId: attempt.id,
+        prompt: problem.prompt,
+        generatedAnswer,
+        storedAnswer: stored.answer,
+        answerCharacters: generatedAnswer.length,
+        storedCharacters: stored.answer.length,
+        storageIntact,
+        expectedCorrect: specification.expectedCorrect,
+        gradedCorrect: graded.correct,
+        match: storageIntact && graded.correct === specification.expectedCorrect,
+        explanation: graded.explanation,
+        confidence: graded.confidence,
+        evidence: graded.evidence,
+      });
+    } catch (error) {
+      cases.push({
+        label: specification.label,
+        problemId: problem.id,
+        answerId: null,
+        attemptId: attempt.id,
+        prompt: problem.prompt,
+        generatedAnswer: "",
+        storedAnswer: "",
+        answerCharacters: 0,
+        storedCharacters: 0,
+        storageIntact: false,
+        expectedCorrect: specification.expectedCorrect,
+        gradedCorrect: null,
+        match: false,
+        explanation: "",
+        confidence: null,
+        evidence: [],
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+
+  res.json({
+    ok: cases.every((item) => item.match),
+    generatedAt: new Date().toISOString(),
+    assignmentTitle: assignment.title,
+    attemptId: attempt.id,
+    summary: `${cases.filter((item) => item.match).length}/${cases.length} generated answers survived storage intact and received the expected substance-based grade.`,
+    cases,
+  });
+});
+
+// ---------- Diagnostic 3: synthetic student ----------
 function syntheticTrace(text: string, durationMs = 12_000) {
   return {
     keystrokeCount: Math.max(1, text.length),

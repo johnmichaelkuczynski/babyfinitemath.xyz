@@ -22,6 +22,89 @@ import { checkMeter, recordAiOutput } from "../lib/metering";
 
 const router: IRouter = Router();
 
+const MCQ_BY_ASSIGNMENT_TITLE: Record<
+  string,
+  { stem: string; options: string[] }
+> = {
+  "Homework 1 — Foundations of prompting": {
+    stem:
+      "A model supplies confident-looking citations, but some do not exist. Which explanation best shows what happened?",
+    options: [
+      "The model predicts plausible text patterns; a confident style does not verify that a citation is real.",
+      "The model searches every journal correctly, but remote-work research changes too quickly.",
+      "Any citation in a response longer than one sentence automatically becomes unreliable.",
+      "The model knows the papers are false but hides that fact whenever five sources are requested.",
+    ],
+  },
+  "Homework 2 — Core techniques": {
+    stem:
+      "A zero-shot email classifier mishandles borderline messages. Which next step is most useful?",
+    options: [
+      "Add a few labeled borderline examples that show the intended category boundaries.",
+      "Repeat each category name many times without examples.",
+      "Remove the category definitions so the model has fewer words to process.",
+      "Ask for a longer explanation after every label but change nothing else.",
+    ],
+  },
+  "Midterm — Foundations and Core Techniques": {
+    stem:
+      "Which revision best repairs the vague prompt “Tell me about this customer feedback and what we should do”?",
+    options: [
+      "State the task, provide the feedback as delimited input, add the business context, and require a two-sentence summary plus one action.",
+      "Add only the phrase “be accurate and helpful.”",
+      "Ask the model to use more professional vocabulary.",
+      "Repeat the original prompt three times.",
+    ],
+  },
+  "Homework 3 — Advanced patterns and reliability": {
+    stem:
+      "An app breaks when it pattern-matches a price from conversational prose. Which fix is strongest?",
+    options: [
+      "Require a validated structured response with a dedicated numeric price field.",
+      "Ask for an even friendlier paragraph and use the same pattern matching.",
+      "Increase the model temperature so prices are formatted more creatively.",
+      "Store the entire reply as the price without validation.",
+    ],
+  },
+  "Homework 4 — Applications, safety, and systems": {
+    stem:
+      "A smooth contract summary omits payment deadlines and termination terms. What should the user request instead?",
+    options: [
+      "Explicit extraction of each payment deadline and termination clause in a structured list, with missing items reported.",
+      "A shorter generic summary with no named fields.",
+      "A more creative rewrite of the entire contract.",
+      "A sentiment score for the vendor relationship.",
+    ],
+  },
+  "Final — Prompt Engineering": {
+    stem:
+      "Which design best supports warm, role-specific rejection letters under 150 words without exposing private notes?",
+    options: [
+      "Use a clear role and task, explicit constraints, delimited private context marked as non-quotable, and a defined output format.",
+      "Use only “write a rejection letter” and let the model infer every rule.",
+      "Put private comments first and ask the model to copy the most specific details.",
+      "Remove the word limit so the model has room to explain itself.",
+    ],
+  },
+};
+
+function applyShortAnswerPolicy(instructions: string | null): string {
+  const cleaned = (instructions ?? "")
+    .replace(/about 3[–-]5 sentences/gi, "about one sentence")
+    .replace(/about 4[–-]6 sentences/gi, "one or two sentences")
+    .replace(/in a few sentences/gi, "in one clear sentence");
+  return `${cleaned}${cleaned ? "\n\n" : ""}Answer-length policy: for every written question, one clear sentence is normally enough, and no response needs more than two sentences. Grading is based on understanding and substance, not course jargon, wording, or length.`;
+}
+
+function multipleChoicePrompt(stem: string, options: string[]): string {
+  return [
+    "[MULTIPLE_CHOICE]",
+    stem,
+    "",
+    ...options.map((option, index) => `${String.fromCharCode(65 + index)}) ${option}`),
+  ].join("\n");
+}
+
 function parseIdParam(raw: unknown): number {
   const s = Array.isArray(raw) ? raw[0] : (raw as string);
   return parseInt(s ?? "", 10);
@@ -43,8 +126,11 @@ router.get("/assignments", async (_req, res) => {
         .from(attemptsTable)
         .where(eq(attemptsTable.assignmentId, a.id))
         .orderBy(asc(attemptsTable.id));
-      const submitted = attempts.filter((x) => x.status === "submitted");
-      const inProgress = attempts.find((x) => x.status === "in_progress");
+      const visibleAttempts = attempts.filter(
+        (x) => x.status === "submitted" || x.status === "in_progress",
+      );
+      const submitted = visibleAttempts.filter((x) => x.status === "submitted");
+      const inProgress = visibleAttempts.find((x) => x.status === "in_progress");
       const best = submitted.reduce(
         (b, x) => (x.scorePercent != null && x.scorePercent > b ? x.scorePercent : b),
         -1,
@@ -54,7 +140,7 @@ router.get("/assignments", async (_req, res) => {
         : submitted.length > 0
         ? "submitted"
         : "not_started";
-      const last = attempts[attempts.length - 1];
+      const last = visibleAttempts[visibleAttempts.length - 1];
       return {
         id: a.id,
         kind: a.kind as "homework" | "test" | "midterm" | "final",
@@ -96,6 +182,19 @@ router.get("/assignments/:assignmentId", async (req, res): Promise<void> => {
     .leftJoin(topicsTable, eq(problemsTable.topicId, topicsTable.id))
     .where(eq(problemsTable.assignmentId, id))
     .orderBy(asc(problemsTable.position));
+  const mcq = MCQ_BY_ASSIGNMENT_TITLE[a.title];
+  const presentedProblems = problems.map((problem, index) => {
+    if (index === 0 && mcq) {
+      return {
+        ...problem,
+        prompt: multipleChoicePrompt(mcq.stem, mcq.options),
+      };
+    }
+    return {
+      ...problem,
+      prompt: `${problem.prompt}\n\nA single clear sentence is enough; answer in your own words.`,
+    };
+  });
   res.json(
     GetAssignmentResponse.parse({
       id: a.id,
@@ -104,8 +203,8 @@ router.get("/assignments/:assignmentId", async (req, res): Promise<void> => {
       weekNumber: a.weekNumber,
       isTimed: a.isTimed,
       timeLimitMinutes: a.timeLimitMinutes,
-      instructions: a.instructions,
-      problems,
+      instructions: applyShortAnswerPolicy(a.instructions),
+      problems: presentedProblems,
     }),
   );
 });
@@ -261,6 +360,13 @@ router.post("/assignments/attempts/:attemptId/submit", async (req, res): Promise
     res.status(404).json({ error: "attempt not found" });
     return;
   }
+  const [assignmentForAttempt] = await db
+    .select({ title: assignmentsTable.title })
+    .from(assignmentsTable)
+    .where(eq(assignmentsTable.id, attempt.assignmentId));
+  const assignmentMcq = assignmentForAttempt
+    ? MCQ_BY_ASSIGNMENT_TITLE[assignmentForAttempt.title]
+    : undefined;
   const problems = await db
     .select()
     .from(problemsTable)
@@ -278,8 +384,10 @@ router.post("/assignments/attempts/:attemptId/submit", async (req, res): Promise
   for (const p of problems) {
     const a = byProblem.get(p.id);
     const userAnswer = a?.answer ?? "";
+    const presentedMcq =
+      p.position === problems[0]?.position ? assignmentMcq : undefined;
     const graded = await gradeAnswer({
-      prompt: p.prompt,
+      prompt: presentedMcq?.stem ?? p.prompt,
       correctAnswer: p.correctAnswer,
       userAnswer,
     });

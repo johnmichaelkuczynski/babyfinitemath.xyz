@@ -33,7 +33,7 @@ export function CompanyContact({
           ZHI SYSTEMS
         </span>
         <a
-          href="mailto:johnmichaelkuczynski@gmail.com"
+          href="mailto:contact@zhisystems.ai"
           className="block rounded-sm text-xs underline decoration-border underline-offset-2 transition-colors hover:text-foreground hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           Contact us

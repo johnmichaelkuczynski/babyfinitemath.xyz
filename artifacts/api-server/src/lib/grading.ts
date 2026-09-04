@@ -27,7 +27,12 @@ export async function gradeAnswer(opts: {
   prompt: string;
   correctAnswer: string;
   userAnswer: string;
-}): Promise<{ correct: boolean; explanation: string }> {
+}): Promise<{
+  correct: boolean;
+  explanation: string;
+  confidence: number;
+  evidence: string[];
+}> {
   const user = opts.userAnswer ?? "";
   const correct = opts.correctAnswer ?? "";
 
@@ -35,6 +40,8 @@ export async function gradeAnswer(opts: {
     return {
       correct: true,
       explanation: `Correct. ${correct}`,
+      confidence: 1,
+      evidence: ["The response matches the reference answer after harmless formatting differences."],
     };
   }
 
@@ -43,7 +50,12 @@ export async function gradeAnswer(opts: {
   if (u != null && c != null) {
     const tol = Math.max(0.01, Math.abs(c) * 0.01);
     if (Math.abs(u - c) <= tol) {
-      return { correct: true, explanation: `Correct. The expected answer is ${correct}.` };
+      return {
+        correct: true,
+        explanation: `Correct. The expected answer is ${correct}.`,
+        confidence: 1,
+        evidence: ["The numerical value is within the accepted tolerance."],
+      };
     }
   }
 
@@ -51,50 +63,70 @@ export async function gradeAnswer(opts: {
     return {
       correct: false,
       explanation: `No answer was provided.`,
+      confidence: 1,
+      evidence: ["The submitted response is empty after whitespace is removed."],
     };
   }
 
-  try {
-    const out = await chatJson<{ correct: boolean; explanation: string }>(
-      [
-        "You grade short prompt-engineering answers. Judge whether the student's answer is ACTUALLY CORRECT as an answer to the question, using your own expert knowledge of prompt engineering and reasoning. Judge on substance alone.",
-        "",
-        "About the reference answer:",
-        "- A `reference_answer` is provided. It is only a FALLIBLE HINT from the course materials — it may be incomplete, narrow, or simply WRONG. It is NOT ground truth.",
-        "- Do not grade by similarity to the reference. Grade by whether the student's answer is actually correct on the merits.",
-        "- If the student is actually correct but differs from — or even contradicts — the reference, mark `correct` = true. If the reference itself is wrong, ignore it and judge the student on the truth.",
-        "",
-        "How to decide `correct`:",
-        "- First work out what the question stem actually requires, then judge whether the student genuinely supplies a correct answer to it.",
-        "- Mark `correct` = true when the student's answer is substantively correct — even if phrased completely differently, and even if it omits extra material the reference happened to include. If two answers do not differ in substance, they MUST get the same grade.",
-        "- Mark `correct` = false only when the answer is substantively wrong or genuinely fails to answer the question.",
-        "",
-        "NEVER lower the grade for any of these — they do not affect correctness at all:",
-        "- Grammar, spelling, punctuation, or capitalization (ALL CAPS is completely fine).",
-        "- Sentence fragments, notes, bullet points, shorthand, abbreviations, 'e.g.' examples, or otherwise incomplete sentences. Content expressed in fragments earns the same grade as content in full prose.",
-        "- Not following formatting or length instructions (e.g. 'write 4-6 sentences'). Only correctness of content matters — never obedience to form or instructions.",
-        "- Wording, structure, or examples that differ from the reference while being correct.",
-        "",
-        "Keep `explanation` neutral, factual, and respectful — never snippy, sarcastic, or dismissive. 1-3 short sentences stating why the answer is or isn't correct on the merits.",
-        "",
-        'Output strict JSON {"correct": boolean, "explanation": string}.',
-      ].join("\n"),
-      JSON.stringify({
-        question_asked: opts.prompt,
-        reference_answer: correct,
-        student_answer: user,
-      }),
-    );
-    return {
-      correct: !!out.correct,
-      explanation: out.explanation || `The correct answer is ${correct}.`,
-    };
-  } catch {
-    return {
-      correct: false,
-      explanation: `The correct answer is ${correct}.`,
-    };
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const out = await chatJson<{
+        correct: boolean;
+        explanation: string;
+        confidence?: number;
+        evidence?: string[];
+      }>(
+        [
+          "You are a fair, intelligent grader of prompt-engineering understanding. This is not a vocabulary, memorization, or writing-style test. Judge SUBSTANCE ONLY.",
+          "",
+          "Core rule:",
+          "- Give credit whenever the response demonstrates the needed understanding, even briefly, informally, or in completely different language from the course.",
+          "- One accurate sentence can earn full credit. A long answer can also earn full credit. Length itself is never evidence for or against correctness.",
+          "- Do not demand course jargon, named techniques, magic words, every detail in the reference, or the same example. Plain-language reasoning is preferred and fully acceptable.",
+          "- Do not invent missing requirements. Ask only whether the student answered the actual question correctly enough to demonstrate understanding.",
+          "",
+          "About the reference answer:",
+          "- `reference_answer` is a fallible aid, not a rubric and not ground truth. It may be longer, narrower, or wrong.",
+          "- Never grade by word overlap or similarity to the reference.",
+          "- If the student's answer is correct on the merits but differs from or contradicts the reference, mark it correct.",
+          "",
+          "Never lower the grade for grammar, spelling, capitalization, fragments, bullets, shorthand, abbreviations, imperfect style, missing jargon, or failure to follow a requested sentence/word count.",
+          "Mark incorrect only for a genuine factual/conceptual error, a response that does not address the question, or omission of substance indispensable to the actual task.",
+          "",
+          "Write a neutral 1-3 sentence explanation. `evidence` must quote or closely identify the substance in the student's answer that supports the verdict. Set confidence from 0 to 1.",
+          'Output strict JSON {"correct": boolean, "explanation": string, "confidence": number, "evidence": string[]}.',
+        ].join("\n"),
+        JSON.stringify({
+          question_asked: opts.prompt,
+          reference_answer: correct,
+          student_answer: user,
+        }),
+      );
+      return {
+        correct: !!out.correct,
+        explanation:
+          out.explanation ||
+          (out.correct
+            ? "The response demonstrates the required understanding."
+            : "The response does not yet supply the substance the question asks for."),
+        confidence:
+          typeof out.confidence === "number"
+            ? Math.max(0, Math.min(1, out.confidence))
+            : 0.75,
+        evidence: Array.isArray(out.evidence)
+          ? out.evidence.filter((item) => typeof item === "string").slice(0, 4)
+          : [],
+      };
+    } catch (error) {
+      lastError = error;
+    }
   }
+
+  const message = lastError instanceof Error ? lastError.message : "unknown grader error";
+  throw new Error(
+    `The grader is temporarily unavailable, so this answer was not marked wrong. Please submit again. (${message})`,
+  );
 }
 
 // Rich, coaching-style feedback for PRACTICE assignments. Unlike gradeAnswer

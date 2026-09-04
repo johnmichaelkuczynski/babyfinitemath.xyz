@@ -84,7 +84,7 @@ router.post(
           explanation: string;
         }>;
       }>(
-        `You write a PRACTICE version of a prompt-engineering ${assignment.kind} titled "${assignment.title}". You are given the real assignment's problems as templates. Produce EXACTLY ${templates.length} NEW problems, one per template, in the same order. Each new problem must: (1) cover the SAME topic and test the SAME concept as its template, (2) be clearly DIFFERENT in wording, scenario, and specifics (never copy the template), (3) match the template's style and answer length (if the template expects a reasoned paragraph, write a problem that calls for a reasoned paragraph), (4) be fully self-contained — do NOT reference "the lecture", "the text", "the course", or any named example a student would only know from a specific reading; state any scenario in full inside the problem. For each problem also write the model "correctAnswer" (what a strong student answer contains) and a short "explanation" of the reasoning. Respond as strict JSON: {"problems": [{"prompt": string, "correctAnswer": string, "explanation": string}, ...]} with exactly ${templates.length} items.`,
+        `You write a PRACTICE version of a prompt-engineering ${assignment.kind} titled "${assignment.title}". You are given the real assignment's problems as templates. Produce EXACTLY ${templates.length} NEW problems, one per template, in the same order. Each new problem must: (1) cover the SAME topic and test the SAME concept as its template, (2) be clearly DIFFERENT in wording, scenario, and specifics (never copy the template), (3) be answerable completely in one clear sentence, with at most two sentences ever needed, and (4) be fully self-contained — do NOT reference "the lecture", "the text", "the course", or any named example a student would only know from a specific reading; state any scenario in full inside the problem. Test practical understanding, never memorization of jargon. For each problem also write a concise model "correctAnswer" and a short "explanation" of the substance that earns credit. Respond as strict JSON: {"problems": [{"prompt": string, "correctAnswer": string, "explanation": string}, ...]} with exactly ${templates.length} items.`,
         JSON.stringify({
           assignmentKind: assignment.kind,
           assignmentTitle: assignment.title,
@@ -114,7 +114,7 @@ router.post(
       ) {
         return {
           topicId: t.topicId,
-          prompt: g.prompt.trim(),
+          prompt: `${g.prompt.trim()}\n\nOne clear sentence is enough.`,
           correctAnswer: g.correctAnswer.trim(),
           explanation:
             (g.explanation ?? "").trim() ||
@@ -123,7 +123,7 @@ router.post(
       }
       return {
         topicId: t.topicId,
-        prompt: `Practice (${topic}): In a short paragraph, explain the central idea of "${topic}" and apply it to an original example you describe in full.`,
+        prompt: `Practice (${topic}): Apply the central idea of "${topic}" to one concrete example. One clear sentence is enough.`,
         correctAnswer: t.correctAnswer,
         explanation:
           "Re-read the relevant section, state the main claim in your own words, and ground it with a concrete example.",

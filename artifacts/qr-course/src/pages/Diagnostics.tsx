@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
-import { CheckCircle2, XCircle, Loader2, PlayCircle, Activity, ShieldCheck } from "lucide-react";
+import { CheckCircle2, XCircle, Loader2, PlayCircle, Activity, ShieldCheck, FileCheck2 } from "lucide-react";
 
 type Step = {
   name: string;
@@ -13,6 +13,33 @@ type RunResult = {
   ok: boolean;
   generatedAt: string;
   steps: Step[];
+};
+type GradingVerificationCase = {
+  label: string;
+  problemId: number;
+  answerId: number | null;
+  attemptId: number;
+  prompt: string;
+  generatedAnswer: string;
+  storedAnswer: string;
+  answerCharacters: number;
+  storedCharacters: number;
+  storageIntact: boolean;
+  expectedCorrect: boolean;
+  gradedCorrect: boolean | null;
+  match: boolean;
+  explanation: string;
+  confidence: number | null;
+  evidence: string[];
+  error?: string;
+};
+type GradingVerificationResult = {
+  ok: boolean;
+  generatedAt: string;
+  assignmentTitle: string;
+  attemptId: number;
+  summary: string;
+  cases: GradingVerificationCase[];
 };
 
 const API = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/api`.replace(
@@ -76,12 +103,15 @@ export default function Diagnostics() {
   const [sysBusy, setSysBusy] = useState(false);
   const [synthBusy, setSynthBusy] = useState(false);
   const [qcBusy, setQcBusy] = useState(false);
+  const [gradingBusy, setGradingBusy] = useState(false);
   const [sysResult, setSysResult] = useState<RunResult | null>(null);
   const [synthResult, setSynthResult] = useState<RunResult | null>(null);
   const [qcResult, setQcResult] = useState<RunResult | null>(null);
+  const [gradingResult, setGradingResult] = useState<GradingVerificationResult | null>(null);
   const [sysError, setSysError] = useState<string | null>(null);
   const [synthError, setSynthError] = useState<string | null>(null);
   const [qcError, setQcError] = useState<string | null>(null);
+  const [gradingError, setGradingError] = useState<string | null>(null);
 
   async function runSystem() {
     setSysBusy(true);
@@ -136,13 +166,35 @@ export default function Diagnostics() {
     }
   }
 
+  async function runGradingVerification() {
+    setGradingBusy(true);
+    setGradingError(null);
+    setGradingResult(null);
+    try {
+      const r = await fetch(apiUrl("/diagnostics/grading-verification"), {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: "{}",
+      });
+      if (!r.ok) {
+        const body = await r.json().catch(() => null);
+        throw new Error(body?.error || `HTTP ${r.status}`);
+      }
+      setGradingResult(await r.json());
+    } catch (e) {
+      setGradingError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setGradingBusy(false);
+    }
+  }
+
   return (
     <Layout>
       <div className="max-w-4xl mx-auto p-8 space-y-8">
         <div>
           <h1 className="font-serif text-3xl mb-1">Diagnostics</h1>
           <p className="text-muted-foreground">
-            Three self-tests to verify the course app is healthy end-to-end.
+            Four self-tests to verify the course app is healthy end-to-end.
           </p>
         </div>
 
@@ -176,7 +228,93 @@ export default function Diagnostics() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <h2 className="font-serif text-xl flex items-center gap-2">
-                <Activity className="w-5 h-5" /> Diagnostic 2 — Synthetic student
+                <FileCheck2 className="w-5 h-5" /> Diagnostic 2 — Live answer and grading verification
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Writes fresh student answers in real time—including a five-paragraph response,
+                concise jargon-free answers, and a fluent wrong answer—stores and reads back the
+                exact text, runs the production grader, and shows the complete evidence below.
+              </p>
+            </div>
+            <button
+              onClick={runGradingVerification}
+              disabled={gradingBusy}
+              className="shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground font-medium disabled:opacity-60"
+            >
+              {gradingBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : <PlayCircle className="w-4 h-4" />}
+              {gradingBusy ? "Writing and grading…" : "Run live grading verification"}
+            </button>
+          </div>
+          {gradingError && (
+            <div className="text-sm text-red-700 font-mono">{gradingError}</div>
+          )}
+          {gradingResult && (
+            <div className="border border-border rounded-lg bg-card overflow-hidden">
+              <div className="px-5 py-3 border-b border-border flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <div className="font-serif text-lg">Live grading evidence</div>
+                  <div className="text-xs text-muted-foreground">
+                    {gradingResult.assignmentTitle} · diagnostic attempt #{gradingResult.attemptId}
+                  </div>
+                </div>
+                <div className={gradingResult.ok ? "text-green-700 font-medium" : "text-red-700 font-medium"}>
+                  {gradingResult.summary}
+                </div>
+              </div>
+              <div className="divide-y divide-border">
+                {gradingResult.cases.map((item) => (
+                  <article key={item.label} className="p-5 space-y-3">
+                    <div className="flex items-center gap-2">
+                      {item.match ? (
+                        <CheckCircle2 className="w-5 h-5 text-green-700" />
+                      ) : (
+                        <XCircle className="w-5 h-5 text-red-700" />
+                      )}
+                      <h3 className="font-semibold">{item.label}</h3>
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Question</div>
+                      <div className="text-sm mt-1 whitespace-pre-wrap">{item.prompt}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Freshly generated answer</div>
+                      <div className="mt-1 whitespace-pre-wrap rounded-md border bg-muted/30 p-3 text-sm">
+                        {item.generatedAnswer || item.error || "No answer was generated."}
+                      </div>
+                    </div>
+                    <div className="grid sm:grid-cols-3 gap-2 text-sm">
+                      <div>Storage: <strong>{item.storageIntact ? "exact" : "mismatch"}</strong> ({item.answerCharacters}/{item.storedCharacters} characters)</div>
+                      <div>Expected: <strong>{item.expectedCorrect ? "correct" : "incorrect"}</strong></div>
+                      <div>Graded: <strong>{item.gradedCorrect == null ? "not graded" : item.gradedCorrect ? "correct" : "incorrect"}</strong></div>
+                    </div>
+                    {item.explanation && (
+                      <div className="text-sm">
+                        <strong>Grader explanation:</strong> {item.explanation}
+                      </div>
+                    )}
+                    {item.evidence.length > 0 && (
+                      <div className="text-sm">
+                        <strong>Substance evidence:</strong>
+                        <ul className="list-disc pl-5 mt-1">
+                          {item.evidence.map((evidence) => <li key={evidence}>{evidence}</li>)}
+                        </ul>
+                      </div>
+                    )}
+                    <div className="text-xs text-muted-foreground font-mono">
+                      problem #{item.problemId} · answer #{item.answerId ?? "none"} · confidence {item.confidence == null ? "n/a" : `${Math.round(item.confidence * 100)}%`}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+
+        <section className="space-y-3">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="font-serif text-xl flex items-center gap-2">
+                <Activity className="w-5 h-5" /> Diagnostic 3 — Synthetic student
               </h2>
               <p className="text-sm text-muted-foreground mt-1">
                 Walks a synthetic student through the whole course: reads every lecture,
@@ -206,7 +344,7 @@ export default function Diagnostics() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <h2 className="font-serif text-xl flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5" /> Diagnostic 3 — Answer-key quality control
+                <ShieldCheck className="w-5 h-5" /> Diagnostic 4 — Answer-key quality control
               </h2>
               <p className="text-sm text-muted-foreground mt-1">
                 Uses OpenAI to independently re-derive the answer to a sample of course
